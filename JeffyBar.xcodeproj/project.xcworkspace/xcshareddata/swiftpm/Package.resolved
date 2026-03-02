@@ -1,6 +1,15 @@
 {
-  "originHash" : "1f88b839ada3b53ce48a65352dce42483bf66be579c76b56807b95046bfed309",
+  "originHash" : "a27f6ca601ea4cc049e3d5e64bb8bdb9214ec0affb0c10e65f601741ddeb3bae",
   "pins" : [
+    {
+      "identity" : "hotkey",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/soffes/HotKey",
+      "state" : {
+        "revision" : "a3cf605d7a96f6ff50e04fcb6dea6e2613cfcbe4",
+        "version" : "0.2.1"
+      }
+    },
     {
       "identity" : "keychainaccess",
       "kind" : "remoteSourceControl",

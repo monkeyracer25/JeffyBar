@@ -12,6 +12,9 @@ packages:
   KeychainAccess:
     url: https://github.com/kishikawakatsumi/KeychainAccess
     from: 4.2.2
+  HotKey:
+    url: https://github.com/soffes/HotKey
+    from: 0.2.0
 targets:
   JeffyBar:
     type: application
@@ -35,6 +38,8 @@ targets:
         product: MarkdownUI
       - package: KeychainAccess
         product: KeychainAccess
+      - package: HotKey
+        product: HotKey
     settings:
       base:
         MACOSX_DEPLOYMENT_TARGET: "14.0"

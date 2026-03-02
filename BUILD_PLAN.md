@@ -308,3 +308,29 @@ Essential reading for implementation:
 - `Views/Artifact/PDFArtifactView.swift` — PDFKit PDFView (NSViewRepresentable).
 - Updated `AppState.swift` — messageArtifacts [UUID:[Artifact]] dict, artifact parsing on finalizeLastMessage().
 - Updated `MessageBubble.swift` — @EnvironmentObject appState, "View Artifact" buttons per detected artifact.
+
+### Phase 4 — COMPLETE ✅ (2026-03-02)
+
+**Status:** BUILD SUCCEEDED — zero errors. All 4 phases done.
+
+**Delivered:**
+- `Client/BonjourDiscovery.swift` — NWBrowser for _openclaw-gw._tcp, parses TXT records (displayName, lanHost, gatewayPort, gatewayTls).
+- `Services/HotKeyManager.swift` — ⌘+J global hotkey (HotKey package). Posts openJeffWindow notification on keydown.
+- `Services/NotificationManager.swift` — UserNotifications. Notifies when Jeff replies and app is in background.
+- `Services/LoginItemManager.swift` — SMAppService.mainApp.register/unregister for launch at login (macOS 13+).
+- `Intents/AskJeffIntent.swift` — AppIntents: "Ask Jeff" non-streaming HTTP intent.
+- `Intents/JeffShortcuts.swift` — AppShortcutsProvider with "Ask Jeff" shortcut.
+- Updated `MenuBarIconLabel.swift` — symbolEffect(.variableColor.iterative.reversing) while streaming.
+- Updated `SettingsView.swift` — Bonjour discovery section (search/one-click-use), Launch at Login toggle.
+- Updated `JeffyBarApp.swift` — HotKey registration, notification permission, BonjourDiscovery as StateObject.
+- Updated `AppState.swift` — Background notification on finalizeLastMessage when NSApp.isActive is false.
+- Updated `ChatInputView.swift` — File drag-and-drop (onDrop .fileURL), file chips, appends file paths to message.
+- Updated `project.yml` — HotKey SPM package added.
+
+**AppShortcut note:** `\(\.$message)` phrase substitution not available for String params (requires AppEntity); simplified to `"Ask \(.applicationName)"` phrases.
+
+## Final Stats
+- **29 Swift source files**
+- **4 phases complete**
+- All phases: BUILD SUCCEEDED, zero errors
+- Repo: https://github.com/monkeyracer25/JeffyBar

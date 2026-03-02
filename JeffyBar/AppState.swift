@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 enum ConnectionState {
     case disconnected
@@ -22,6 +23,7 @@ class AppState: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var isStreaming: Bool = false
     @Published var gatewayURL: String = UserDefaults.standard.string(forKey: "gatewayURL") ?? "http://localhost:18789"
+    @Published var messageArtifacts: [UUID: [Artifact]] = [:]
 
     func addMessage(_ message: ChatMessage) {
         messages.append(message)
@@ -38,6 +40,21 @@ class AppState: ObservableObject {
         let lastIndex = messages.count - 1
         messages[lastIndex].isStreaming = false
         isStreaming = false
+
+        let message = messages[lastIndex]
+        if !message.isUser {
+            // Parse artifacts
+            let artifacts = ArtifactParser.extractArtifacts(from: message.text, messageId: message.id)
+            if !artifacts.isEmpty {
+                messageArtifacts[message.id] = artifacts
+            }
+
+            // Notify if app not in foreground
+            if !NSApp.isActive {
+                let preview = message.text.components(separatedBy: "\n").first ?? message.text
+                NotificationManager.shared.notifyResponseReady(preview: preview)
+            }
+        }
     }
 
     func setLastMessageError(_ error: String) {
