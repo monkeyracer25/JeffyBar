@@ -275,3 +275,19 @@ Essential reading for implementation:
 - Used URLSession.bytes directly for SSE (no EventSource lib needed in Phase 1)
 - GatewayHTTPClient is @MainActor — all UI updates on main thread automatically
 - MenuBarIconLabel uses @ObservedObject (not EnvironmentObject) — works in MenuBarExtra label context
+
+### Phase 2 — COMPLETE ✅ (2026-03-02)
+
+**Status:** BUILD SUCCEEDED — zero errors.
+
+**Delivered:**
+- `Client/DeviceIdentity.swift` — Ed25519 keypair (CryptoKit Curve25519.Signing). Derives deviceId as SHA256(rawPubKey).hex, publicKeyBase64URL, signs v3 auth payload. Persists private key in Keychain.
+- `Client/GatewayWSClient.swift` — Full WebSocket client (@MainActor). connect.challenge handshake → signed connect request with device identity. chat.send/history/abort methods. Streaming delta accumulation. Auto-reconnect on disconnect.
+- `Views/MainWindowView.swift` — Detachable 900×700 WindowGroup. Toolbar with WS/HTTP badge + Stop + Clear. Falls back to HTTP+SSE if WS not connected.
+- Updated `JeffyBarApp.swift` — Added wsClient StateObject, WindowGroup("Jeff", id: "main-window"), wsClient injected into all scenes.
+- Updated `ChatPopoverView.swift` — WS-first routing, "Open in Window" button (@Environment(\.openWindow)), wsClient EnvironmentObject.
+- Updated `KeychainHelper.swift` — Added saveData/getData for binary key storage.
+
+**Signing format (v3):** "v3|deviceId|clientId|mode|role|scopes|signedAtMs|token|nonce|platform|deviceFamily" joined by "|", signed with Ed25519, base64url encoded.
+
+**Key discovery:** Claude Code writes to .claude/worktrees — new files must be copied to actual project dir after each run.

@@ -18,4 +18,12 @@ class KeychainHelper {
     func delete(_ key: String) throws {
         try keychain.remove(key)
     }
+
+    func saveData(_ data: Data, for key: String) throws {
+        try keychain.set(data, key: key)
+    }
+
+    func getData(_ key: String) throws -> Data? {
+        try keychain.getData(key)
+    }
 }

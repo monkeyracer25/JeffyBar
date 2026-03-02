@@ -1,54 +1,70 @@
 import SwiftUI
+import MarkdownUI
 
-struct ChatPopoverView: View {
+struct MainWindowView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var gatewayClient: GatewayHTTPClient
     @EnvironmentObject var wsClient: GatewayWSClient
-    @Environment(\.openWindow) private var openWindow
     @State private var messageText = ""
 
     var body: some View {
         VStack(spacing: 0) {
-            headerView
+            toolbarView
             Divider()
             messagesView
             Divider()
-            inputView
+            ChatInputView(
+                messageText: $messageText,
+                onSend: sendMessage,
+                onCancel: cancelMessage
+            )
+            .padding(16)
         }
         .background(Color(.windowBackgroundColor))
+        .navigationTitle("Jeff")
+        .onAppear {
+            let url = UserDefaults.standard.string(forKey: "gatewayURL") ?? ""
+            let token = (try? KeychainHelper.shared.get("gatewayToken")) ?? ""
+            if !url.isEmpty && !token.isEmpty && !wsClient.isConnected {
+                wsClient.connect(gatewayURL: url, token: token, appState: appState)
+            }
+        }
     }
 
-    private var headerView: some View {
+    private var toolbarView: some View {
         HStack {
             Image(systemName: "bolt.fill")
                 .foregroundStyle(.yellow)
             Text("Jeff")
                 .font(.headline)
             Spacer()
-            connectionIndicator
-            Button(action: openMainWindow) {
-                Image(systemName: "arrow.up.left.and.arrow.down.right")
+            connectionBadge
+            if appState.isStreaming {
+                Button("Stop") {
+                    cancelMessage()
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .foregroundStyle(.red)
+            }
+            Button(action: clearHistory) {
+                Image(systemName: "trash")
                     .font(.caption)
             }
             .buttonStyle(.plain)
-            .help("Open in window")
-            Button(action: openSettings) {
-                Image(systemName: "gear")
-                    .font(.caption)
-            }
-            .buttonStyle(.plain)
+            .help("Clear conversation")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .background(.ultraThinMaterial)
     }
 
-    private var connectionIndicator: some View {
+    private var connectionBadge: some View {
         HStack(spacing: 4) {
             Circle()
                 .fill(appState.connectionState.color)
                 .frame(width: 7, height: 7)
-            Text(connectionLabel)
+            Text(wsClient.isConnected ? "WebSocket" : "HTTP")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -57,7 +73,7 @@ struct ChatPopoverView: View {
     private var messagesView: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 8) {
+                LazyVStack(alignment: .leading, spacing: 12) {
                     if appState.messages.isEmpty {
                         emptyState
                     }
@@ -66,7 +82,7 @@ struct ChatPopoverView: View {
                             .id(message.id)
                     }
                 }
-                .padding(12)
+                .padding(16)
             }
             .onChange(of: appState.messages.count) {
                 scrollToBottom(proxy: proxy)
@@ -77,35 +93,19 @@ struct ChatPopoverView: View {
         }
     }
 
-    private var inputView: some View {
-        ChatInputView(
-            messageText: $messageText,
-            onSend: sendMessage,
-            onCancel: cancelMessage
-        )
-        .padding(12)
-    }
-
     private var emptyState: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             Image(systemName: "bolt.fill")
-                .font(.system(size: 36))
+                .font(.system(size: 48))
                 .foregroundStyle(.yellow)
+            Text("Jeff is ready")
+                .font(.title2)
+                .fontWeight(.semibold)
             Text("What can I help with?")
-                .font(.headline)
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 80)
-    }
-
-    private var connectionLabel: String {
-        switch appState.connectionState {
-        case .disconnected: return "Offline"
-        case .connecting: return "Connecting..."
-        case .connected: return "Connected"
-        case .error: return "Error"
-        }
+        .padding(.top, 120)
     }
 
     private func scrollToBottom(proxy: ScrollViewProxy) {
@@ -119,7 +119,6 @@ struct ChatPopoverView: View {
     private func sendMessage() {
         let text = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, !appState.isStreaming else { return }
-
         messageText = ""
 
         let userMsg = ChatMessage(role: .user, text: text)
@@ -150,11 +149,7 @@ struct ChatPopoverView: View {
         }
     }
 
-    private func openMainWindow() {
-        openWindow(id: "main-window")
-    }
-
-    private func openSettings() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+    private func clearHistory() {
+        appState.messages = []
     }
 }
