@@ -1,0 +1,45 @@
+name: JeffyBar
+options:
+  bundleIdPrefix: com.jeffybar
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+packages:
+  MarkdownUI:
+    url: https://github.com/gonzalezreal/swift-markdown-ui
+    from: 2.3.0
+  KeychainAccess:
+    url: https://github.com/kishikawakatsumi/KeychainAccess
+    from: 4.2.2
+targets:
+  JeffyBar:
+    type: application
+    platform: macOS
+    sources:
+      - JeffyBar
+    info:
+      path: JeffyBar/Info.plist
+      properties:
+        LSUIElement: true
+        NSBonjourServices:
+          - _openclaw-gw._tcp
+        NSLocalNetworkUsageDescription: "Jeff discovers your OpenClaw Gateway on the local network."
+        CFBundleName: JeffyBar
+        CFBundleDisplayName: JeffyBar
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "1.0"
+        NSMainStoryboardFile: ""
+    dependencies:
+      - package: MarkdownUI
+        product: MarkdownUI
+      - package: KeychainAccess
+        product: KeychainAccess
+    settings:
+      base:
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+        PRODUCT_BUNDLE_IDENTIFIER: com.jeffybar.JeffyBar
+        CODE_SIGNING_ALLOWED: "NO"

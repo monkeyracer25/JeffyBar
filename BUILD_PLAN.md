@@ -246,3 +246,32 @@ Essential reading for implementation:
 - `openclaw/docs/gateway/discovery.md` — Discovery & transports
 - `openclaw/docs/platforms/mac/webchat.md` — Existing WebChat reference
 - `openclaw/docs/platforms/mac/canvas.md` — Canvas panel reference
+
+---
+
+## Build Progress Log
+
+### Phase 1 — COMPLETE ✅ (2026-03-02)
+
+**Status:** BUILD SUCCEEDED — zero errors, zero warnings.
+
+**Delivered:**
+- `project.yml` → xcodegen project with MarkdownUI + KeychainAccess SPM deps
+- `JeffyBarApp.swift` — @main with MenuBarExtra(.window) + Settings scenes, LSUIElement=YES
+- `AppState.swift` — @MainActor ObservableObject for connection state, messages, streaming
+- `Models/ChatMessage.swift` — ChatMessage model (id, role, text, isStreaming)
+- `Client/GatewayHTTPClient.swift` — HTTP+SSE client using URLSession.bytes, hits /v1/chat/completions
+- `Services/KeychainHelper.swift` — Keychain wrapper (KeychainAccess library)
+- `Views/MenuBarIconLabel.swift` — Dynamic bolt icon (bolt/bolt.fill/bolt.slash etc.)
+- `Views/Chat/ChatPopoverView.swift` — Full popover: header, scrolling messages, input
+- `Views/Chat/ChatInputView.swift` — TextField + send/cancel buttons, FocusState
+- `Views/Chat/MessageBubble.swift` — User bubbles (plain) + assistant (MarkdownUI)
+- `Views/Chat/StreamingIndicator.swift` — Animated 3-dot typing indicator
+- `Views/SettingsView.swift` — Gateway URL + auth token (Keychain), connection test
+
+**Notable fix:** `.foregroundStyle(.accentColor)` → `.foregroundColor(.accentColor)` in SettingsView.
+
+**Tech decisions:**
+- Used URLSession.bytes directly for SSE (no EventSource lib needed in Phase 1)
+- GatewayHTTPClient is @MainActor — all UI updates on main thread automatically
+- MenuBarIconLabel uses @ObservedObject (not EnvironmentObject) — works in MenuBarExtra label context

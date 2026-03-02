@@ -1,0 +1,427 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		015D7ABC0D160DC3B764F0B7 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 5E7F556C10175BCA3413456D /* KeychainAccess */; };
+		09A8AC84C51DE6E5946594BA /* ChatPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E95C026898DE5D86825795C /* ChatPopoverView.swift */; };
+		0FDA945C1B287FFFA45A40FC /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5DEB3E49148DED55293ED4 /* ChatMessage.swift */; };
+		23914F5CD5A6F1572337C434 /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193D643C733827B19CC5CC2 /* MessageBubble.swift */; };
+		49678E53D0D2B9EDC1B507A2 /* GatewayHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BF7DCECA21E00DD6A2CF59 /* GatewayHTTPClient.swift */; };
+		4C01018C90D38CE29CDF8BF1 /* JeffyBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DBC1F63B093F83FE9D4B586 /* JeffyBarApp.swift */; };
+		68DFB86E908926005863408C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E81868F2B5586E956C13409 /* SettingsView.swift */; };
+		6F6D122921322836F691A966 /* MenuBarIconLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80013792C4FE94EF9057B938 /* MenuBarIconLabel.swift */; };
+		CC77478EF9A3E3838716332F /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 565F76DD94E4C71CEA2AB5AF /* MarkdownUI */; };
+		CFFF73D27407BEEA8461AD44 /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352A7B3B76DE0D0871B3A958 /* ChatInputView.swift */; };
+		EFC17AC7879299C195DCD9B7 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AE9497F765AE0E2A47F0B6 /* KeychainHelper.swift */; };
+		FCB82AD7C8CAF94316C196B1 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC02B0FE48FFBE1CA4211AA9 /* AppState.swift */; };
+		FF66B33993FC727983F3965C /* StreamingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A92ADC71E2935680BD9D505D /* StreamingIndicator.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		04BF7DCECA21E00DD6A2CF59 /* GatewayHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatewayHTTPClient.swift; sourceTree = "<group>"; };
+		0D27E4D5A4C905B61994B481 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1E95C026898DE5D86825795C /* ChatPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPopoverView.swift; sourceTree = "<group>"; };
+		352A7B3B76DE0D0871B3A958 /* ChatInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputView.swift; sourceTree = "<group>"; };
+		4E81868F2B5586E956C13409 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4F5DEB3E49148DED55293ED4 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		59AE9497F765AE0E2A47F0B6 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		80013792C4FE94EF9057B938 /* MenuBarIconLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIconLabel.swift; sourceTree = "<group>"; };
+		8DBC1F63B093F83FE9D4B586 /* JeffyBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JeffyBarApp.swift; sourceTree = "<group>"; };
+		A11F5D373E50342FAD2DC499 /* JeffyBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JeffyBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A92ADC71E2935680BD9D505D /* StreamingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingIndicator.swift; sourceTree = "<group>"; };
+		B193D643C733827B19CC5CC2 /* MessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubble.swift; sourceTree = "<group>"; };
+		CC02B0FE48FFBE1CA4211AA9 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B6BFE38D66ABBFC99246DC69 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC77478EF9A3E3838716332F /* MarkdownUI in Frameworks */,
+				015D7ABC0D160DC3B764F0B7 /* KeychainAccess in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		26A7489BFE781458A8227732 /* JeffyBar */ = {
+			isa = PBXGroup;
+			children = (
+				CC02B0FE48FFBE1CA4211AA9 /* AppState.swift */,
+				0D27E4D5A4C905B61994B481 /* Info.plist */,
+				8DBC1F63B093F83FE9D4B586 /* JeffyBarApp.swift */,
+				491B9075CE861E019782BC84 /* Client */,
+				C187C15781A717A5C2595146 /* Models */,
+				637AF12AB7EDC1116FA8B41C /* Services */,
+				3C14C44C415B14CA15BB4E2D /* Views */,
+			);
+			path = JeffyBar;
+			sourceTree = "<group>";
+		};
+		37534725ECB6076B5F47934A = {
+			isa = PBXGroup;
+			children = (
+				26A7489BFE781458A8227732 /* JeffyBar */,
+				56565A1215A3A36DFF0FF17C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3C14C44C415B14CA15BB4E2D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				80013792C4FE94EF9057B938 /* MenuBarIconLabel.swift */,
+				4E81868F2B5586E956C13409 /* SettingsView.swift */,
+				82B08085528BB478E9D09FB2 /* Chat */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		491B9075CE861E019782BC84 /* Client */ = {
+			isa = PBXGroup;
+			children = (
+				04BF7DCECA21E00DD6A2CF59 /* GatewayHTTPClient.swift */,
+			);
+			path = Client;
+			sourceTree = "<group>";
+		};
+		56565A1215A3A36DFF0FF17C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A11F5D373E50342FAD2DC499 /* JeffyBar.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		637AF12AB7EDC1116FA8B41C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				59AE9497F765AE0E2A47F0B6 /* KeychainHelper.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		82B08085528BB478E9D09FB2 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				352A7B3B76DE0D0871B3A958 /* ChatInputView.swift */,
+				1E95C026898DE5D86825795C /* ChatPopoverView.swift */,
+				B193D643C733827B19CC5CC2 /* MessageBubble.swift */,
+				A92ADC71E2935680BD9D505D /* StreamingIndicator.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		C187C15781A717A5C2595146 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4F5DEB3E49148DED55293ED4 /* ChatMessage.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7CACD3B47D6B1EE3D61C3F74 /* JeffyBar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 06F8C1EDA292D225F8423B4E /* Build configuration list for PBXNativeTarget "JeffyBar" */;
+			buildPhases = (
+				12169572DBD36FA3DF778F19 /* Sources */,
+				B6BFE38D66ABBFC99246DC69 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JeffyBar;
+			packageProductDependencies = (
+				565F76DD94E4C71CEA2AB5AF /* MarkdownUI */,
+				5E7F556C10175BCA3413456D /* KeychainAccess */,
+			);
+			productName = JeffyBar;
+			productReference = A11F5D373E50342FAD2DC499 /* JeffyBar.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8AC161DEA010D14150B8EA58 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					7CACD3B47D6B1EE3D61C3F74 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9A1123404CA8C98C3D747953 /* Build configuration list for PBXProject "JeffyBar" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 37534725ECB6076B5F47934A;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FC9247C73521253C1AE3DBFC /* XCRemoteSwiftPackageReference "KeychainAccess" */,
+				7F84DD21B1927B088C846803 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7CACD3B47D6B1EE3D61C3F74 /* JeffyBar */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		12169572DBD36FA3DF778F19 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCB82AD7C8CAF94316C196B1 /* AppState.swift in Sources */,
+				CFFF73D27407BEEA8461AD44 /* ChatInputView.swift in Sources */,
+				0FDA945C1B287FFFA45A40FC /* ChatMessage.swift in Sources */,
+				09A8AC84C51DE6E5946594BA /* ChatPopoverView.swift in Sources */,
+				49678E53D0D2B9EDC1B507A2 /* GatewayHTTPClient.swift in Sources */,
+				4C01018C90D38CE29CDF8BF1 /* JeffyBarApp.swift in Sources */,
+				EFC17AC7879299C195DCD9B7 /* KeychainHelper.swift in Sources */,
+				6F6D122921322836F691A966 /* MenuBarIconLabel.swift in Sources */,
+				23914F5CD5A6F1572337C434 /* MessageBubble.swift in Sources */,
+				68DFB86E908926005863408C /* SettingsView.swift in Sources */,
+				FF66B33993FC727983F3965C /* StreamingIndicator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		06256FEE06C8FC636AB3D1AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = JeffyBar/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeffybar.JeffyBar;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		9BC44EE7D8869407225EEF9E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = JeffyBar/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeffybar.JeffyBar;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		BBAA11F57B718B3EADE14832 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		E6B2A69EBE03A603B6D9196F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		06F8C1EDA292D225F8423B4E /* Build configuration list for PBXNativeTarget "JeffyBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9BC44EE7D8869407225EEF9E /* Debug */,
+				06256FEE06C8FC636AB3D1AC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9A1123404CA8C98C3D747953 /* Build configuration list for PBXProject "JeffyBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E6B2A69EBE03A603B6D9196F /* Debug */,
+				BBAA11F57B718B3EADE14832 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7F84DD21B1927B088C846803 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.0;
+			};
+		};
+		FC9247C73521253C1AE3DBFC /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.2.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		565F76DD94E4C71CEA2AB5AF /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7F84DD21B1927B088C846803 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
+		5E7F556C10175BCA3413456D /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC9247C73521253C1AE3DBFC /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 8AC161DEA010D14150B8EA58 /* Project object */;
+}
