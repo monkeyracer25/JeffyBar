@@ -291,3 +291,20 @@ Essential reading for implementation:
 **Signing format (v3):** "v3|deviceId|clientId|mode|role|scopes|signedAtMs|token|nonce|platform|deviceFamily" joined by "|", signed with Ed25519, base64url encoded.
 
 **Key discovery:** Claude Code writes to .claude/worktrees — new files must be copied to actual project dir after each run.
+
+### Phase 3 — COMPLETE ✅ (2026-03-02)
+
+**Status:** BUILD SUCCEEDED — zero errors.
+
+**Delivered:**
+- `Models/Artifact.swift` — Artifact model + ArtifactType enum (code/html/markdown/pdf), suggestedFilename, languageExtension map
+- `Services/ArtifactParser.swift` — Detects code blocks (≥150 chars, lang hint required), full HTML docs, HTML fragments. Static methods only.
+- `Services/WindowManager.swift` — @MainActor singleton. Manages ArtifactPanel lifecycle. saveArtifact() → ~/Documents/Jeff/. revealInFinder() via NSWorkspace.
+- `Views/Artifact/ArtifactPanel.swift` — NSPanel subclass: .nonactivatingPanel, .floating level, .canJoinAllSpaces, position autosaved.
+- `Views/Artifact/ArtifactPanelView.swift` — Toolbar (Copy/Save/Save & Reveal) + content router.
+- `Views/Artifact/CodeArtifactView.swift` — Line-numbered monospaced code view, native SwiftUI.
+- `Views/Artifact/HTMLArtifactView.swift` — WKWebView (NSViewRepresentable) with dark-mode CSS.
+- `Views/Artifact/MarkdownArtifactView.swift` — MarkdownUI scrollable view.
+- `Views/Artifact/PDFArtifactView.swift` — PDFKit PDFView (NSViewRepresentable).
+- Updated `AppState.swift` — messageArtifacts [UUID:[Artifact]] dict, artifact parsing on finalizeLastMessage().
+- Updated `MessageBubble.swift` — @EnvironmentObject appState, "View Artifact" buttons per detected artifact.
