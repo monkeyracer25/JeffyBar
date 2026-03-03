@@ -5,6 +5,29 @@ struct MessageBubble: View {
     let message: ChatMessage
     @EnvironmentObject var appState: AppState
 
+    /// Strip code fences from the display text when artifacts exist
+    var displayText: String {
+        guard appState.messageArtifacts[message.id] != nil else {
+            return message.text
+        }
+        // Remove ```lang ... ``` blocks, keep everything else
+        var result = message.text
+        let pattern = "```[a-zA-Z]*\\n[\\s\\S]*?```"
+        if let regex = try? NSRegularExpression(pattern: pattern) {
+            result = regex.stringByReplacingMatches(
+                in: result,
+                range: NSRange(result.startIndex..., in: result),
+                withTemplate: ""
+            )
+        }
+        // Clean up extra whitespace
+        result = result.trimmingCharacters(in: .whitespacesAndNewlines)
+        if result.isEmpty {
+            result = "Here you go 👇"
+        }
+        return result
+    }
+
     var body: some View {
         if message.isUser {
             HStack {
@@ -22,24 +45,12 @@ struct MessageBubble: View {
                     if message.text.isEmpty && message.isStreaming {
                         StreamingIndicator()
                     } else {
-                        Markdown(message.text.isEmpty ? " " : message.text)
+                        Markdown(displayText.isEmpty ? " " : displayText)
                             .markdownTheme(.gitHub)
                             .textSelection(.enabled)
                         if message.isStreaming {
                             StreamingIndicator()
                         }
-                    }
-
-                    // File fetching indicator
-                    if appState.isFetchingFile && !message.isStreaming && !message.isUser {
-                        HStack(spacing: 6) {
-                            ProgressView()
-                                .controlSize(.mini)
-                            Text("Fetching file from Mini…")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.vertical, 2)
                     }
 
                     // Artifact buttons
@@ -61,6 +72,17 @@ struct MessageBubble: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
                             .buttonStyle(.plain)
+                        }
+                    }
+
+                    // File fetching indicator
+                    if appState.isFetchingFile {
+                        HStack(spacing: 6) {
+                            ProgressView()
+                                .controlSize(.small)
+                            Text("Fetching file from Mini…")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
