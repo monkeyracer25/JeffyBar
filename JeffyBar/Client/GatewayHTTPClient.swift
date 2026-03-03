@@ -49,7 +49,6 @@ class GatewayHTTPClient: ObservableObject {
                 request.httpMethod = "POST"
                 request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.setValue("main", forHTTPHeaderField: "x-openclaw-agent-id")
                 request.timeoutInterval = 120
 
                 let historyMessages = conversationHistory.suffix(20).map { msg -> [String: String] in
@@ -117,7 +116,6 @@ class GatewayHTTPClient: ObservableObject {
         request.httpMethod = "POST"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("main", forHTTPHeaderField: "x-openclaw-agent-id")
         request.timeoutInterval = 10
         let body: [String: Any] = [
             "model": "openclaw:main",
