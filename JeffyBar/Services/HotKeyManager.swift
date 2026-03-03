@@ -4,30 +4,41 @@ import HotKey
 @MainActor
 class HotKeyManager: ObservableObject {
     static let shared = HotKeyManager()
-    private var hotKey: HotKey?
-
+    private var openHotKey: HotKey?
+    private var selectAskHotKey: HotKey?
+    private var screenshotHotKey: HotKey?
     private init() {}
 
     func register() {
-        // ⌘+J to open Jeff main window
-        hotKey = HotKey(key: .j, modifiers: [.command])
-        hotKey?.keyDownHandler = {
+        openHotKey = HotKey(key: .j, modifiers: [.command])
+        openHotKey?.keyDownHandler = {
             Task { @MainActor in
-                HotKeyManager.shared.activateJeff()
+                NotificationCenter.default.post(name: .openJeffWindow, object: nil)
+            }
+        }
+
+        selectAskHotKey = HotKey(key: .space, modifiers: [.option])
+        selectAskHotKey?.keyDownHandler = {
+            Task { @MainActor in
+                NotificationCenter.default.post(name: .selectAndAsk, object: nil)
+            }
+        }
+
+        screenshotHotKey = HotKey(key: .j, modifiers: [.command, .shift])
+        screenshotHotKey?.keyDownHandler = {
+            Task { @MainActor in
+                NotificationCenter.default.post(name: .captureScreenshot, object: nil)
             }
         }
     }
 
     func unregister() {
-        hotKey = nil
-    }
-
-    private func activateJeff() {
-        // Post notification to open main window
-        NotificationCenter.default.post(name: .openJeffWindow, object: nil)
+        openHotKey = nil; selectAskHotKey = nil; screenshotHotKey = nil
     }
 }
 
 extension Notification.Name {
     static let openJeffWindow = Notification.Name("com.jeffybar.openJeffWindow")
+    static let selectAndAsk = Notification.Name("com.jeffybar.selectAndAsk")
+    static let captureScreenshot = Notification.Name("com.jeffybar.captureScreenshot")
 }

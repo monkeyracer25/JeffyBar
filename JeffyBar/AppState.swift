@@ -26,8 +26,38 @@ class AppState: ObservableObject {
     @Published var messageArtifacts: [UUID: [Artifact]] = [:]
     @Published var isFetchingFile: Bool = false
 
+    // Phase 2: Model Picker
+    @Published var selectedModel: AIModel = {
+        if let id = UserDefaults.standard.string(forKey: "selectedModel") {
+            return AIModel.fromId(id)
+        }
+        return AIModel.default
+    }() {
+        didSet { UserDefaults.standard.set(selectedModel.id, forKey: "selectedModel") }
+    }
+
+    // Phase 2: Select & Ask + Screenshot pending state
+    @Published var pendingSelectAndAskText: String?
+    @Published var pendingAppContext: AppContext?
+    @Published var pendingScreenshot: String?
+
     /// Reference to the HTTP client for file fetching (set by the app on init)
     var httpClient: GatewayHTTPClient?
+
+    // Phase 2: Load conversation from persistence
+    func loadConversation(_ convId: String) {
+        let store = ConversationStore.shared
+        store.currentConversationId = convId
+        let records = store.loadMessages(for: convId)
+        messages = records.map { rec in
+            ChatMessage(
+                id: UUID(uuidString: rec.id) ?? UUID(),
+                role: rec.role == "user" ? .user : .assistant,
+                text: rec.content,
+                timestamp: rec.timestamp
+            )
+        }
+    }
 
     func addMessage(_ message: ChatMessage) {
         messages.append(message)

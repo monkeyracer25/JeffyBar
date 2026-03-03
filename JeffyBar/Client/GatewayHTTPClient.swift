@@ -44,6 +44,9 @@ class GatewayHTTPClient: ObservableObject {
     func sendMessage(
         _ text: String,
         conversationHistory: [ChatMessage],
+        model: AIModel,
+        screenshot: String? = nil,
+        appContext: AppContext? = nil,
         appState: AppState
     ) {
         currentTask?.cancel()
@@ -59,19 +62,44 @@ class GatewayHTTPClient: ObservableObject {
                 request.httpMethod = "POST"
                 request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                // No agent header — stateless, uses default main agent
-                // timeoutInterval on the request is honoured as the per-packet idle timeout
                 request.timeoutInterval = 120
 
-                let historyMessages = conversationHistory.suffix(20).map { msg -> [String: String] in
+                let historyMessages = conversationHistory.suffix(20).map { msg -> [String: Any] in
                     ["role": msg.isUser ? "user" : "assistant", "content": msg.text]
                 }
+
                 // Append inline instruction so the model returns content in code fences
                 let artifactInstruction = "\n\nIMPORTANT: Do NOT use any tools or try to create files. Return the complete HTML code directly in your message inside a markdown code fence like this: ```html ... ```. Just the code in your reply, nothing else."
-                let newUserMessage: [String: String] = ["role": "user", "content": text + artifactInstruction]
+
+                // Build user message content — use content array if screenshot is present
+                let newUserMessage: [String: Any]
+                if screenshot != nil || appContext != nil {
+                    var contentArray: [[String: Any]] = []
+
+                    // Text content with optional context prefix
+                    var userContent = text + artifactInstruction
+                    if let context = appContext {
+                        userContent = context.asSystemContext() + "\n\n" + text + artifactInstruction
+                    }
+                    contentArray.append(["type": "text", "text": userContent])
+
+                    // Add screenshot if available
+                    if let base64 = screenshot {
+                        contentArray.append([
+                            "type": "image_url",
+                            "image_url": [
+                                "url": "data:image/png;base64,\(base64)"
+                            ]
+                        ])
+                    }
+
+                    newUserMessage = ["role": "user", "content": contentArray]
+                } else {
+                    newUserMessage = ["role": "user", "content": text + artifactInstruction]
+                }
 
                 let body: [String: Any] = [
-                    "model": "anthropic/claude-opus-4-6",
+                    "model": model.id,
                     "stream": true,
                     "messages": historyMessages + [newUserMessage]
                 ]

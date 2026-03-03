@@ -135,7 +135,7 @@ struct ChatPopoverView: View {
             wsClient.sendChatMessage(text)
         } else {
             let history = Array(appState.messages.dropLast(2))
-            gatewayClient.sendMessage(text, conversationHistory: history, appState: appState)
+            gatewayClient.sendMessage(text, conversationHistory: history, model: appState.selectedModel, appState: appState)
         }
     }
 

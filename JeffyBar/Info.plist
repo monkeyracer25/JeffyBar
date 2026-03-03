@@ -30,5 +30,7 @@
 	<string>Jeff discovers your OpenClaw Gateway on the local network.</string>
 	<key>NSMainStoryboardFile</key>
 	<string></string>
+	<key>NSScreenRecordingUsageDescription</key>
+	<string>JeffyBar captures the active window to send to Jeff for analysis</string>
 </dict>
 </plist>

@@ -15,6 +15,9 @@ packages:
   HotKey:
     url: https://github.com/soffes/HotKey
     from: 0.2.0
+  GRDB:
+    url: https://github.com/groue/GRDB.swift
+    from: 7.0.0
 targets:
   JeffyBar:
     type: application
@@ -28,6 +31,7 @@ targets:
         NSBonjourServices:
           - _openclaw-gw._tcp
         NSLocalNetworkUsageDescription: "Jeff discovers your OpenClaw Gateway on the local network."
+        NSScreenRecordingUsageDescription: "JeffyBar captures the active window to send to Jeff for analysis"
         CFBundleName: JeffyBar
         CFBundleDisplayName: JeffyBar
         CFBundleVersion: "1"
@@ -40,6 +44,8 @@ targets:
         product: KeychainAccess
       - package: HotKey
         product: HotKey
+      - package: GRDB
+        product: GRDB
     settings:
       base:
         MACOSX_DEPLOYMENT_TARGET: "14.0"

@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 struct ChatInputView: View {
     @Binding var messageText: String
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var contextManager: AppContextManager
     let onSend: () -> Void
     let onCancel: () -> Void
     @FocusState private var isFocused: Bool
@@ -12,6 +13,11 @@ struct ChatInputView: View {
 
     var body: some View {
         VStack(spacing: 6) {
+            // Quick Actions row
+            QuickActionsView(messageText: $messageText)
+                .environmentObject(appState)
+                .environmentObject(contextManager)
+
             // Attached files chips
             if !attachedFiles.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -25,6 +31,8 @@ struct ChatInputView: View {
             }
 
             HStack(alignment: .bottom, spacing: 8) {
+                ModelPickerView(selectedModel: $appState.selectedModel)
+
                 TextField("Message Jeff...", text: $messageText, axis: .vertical)
                     .textFieldStyle(.plain)
                     .lineLimit(1...5)
@@ -50,6 +58,22 @@ struct ChatInputView: View {
                         handleDrop(providers)
                         return true
                     }
+
+                // Clipboard paste button
+                Menu {
+                    Button {
+                        if let clip = ClipboardManager.shared.readClipboard() {
+                            messageText = clip
+                        }
+                    } label: {
+                        Label("Paste from Clipboard", systemImage: "doc.on.clipboard")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.title3)
+                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
 
                 if appState.isStreaming {
                     Button(action: onCancel) {

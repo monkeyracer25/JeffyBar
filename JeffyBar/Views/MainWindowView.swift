@@ -5,9 +5,19 @@ struct MainWindowView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var gatewayClient: GatewayHTTPClient
     @EnvironmentObject var wsClient: GatewayWSClient
+    @EnvironmentObject var store: ConversationStore
     @State private var messageText = ""
 
     var body: some View {
+        NavigationSplitView {
+            ConversationSidebarView()
+        } detail: {
+            chatDetailView
+        }
+        .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 300)
+    }
+
+    private var chatDetailView: some View {
         VStack(spacing: 0) {
             toolbarView
             Divider()
@@ -128,11 +138,25 @@ struct MainWindowView: View {
         appState.addMessage(assistantMsg)
         appState.isStreaming = true
 
+        // Capture pending context/screenshot
+        let screenshot = appState.pendingScreenshot
+        let appContext = appState.pendingAppContext
+        appState.pendingScreenshot = nil
+        appState.pendingAppContext = nil
+        appState.pendingSelectAndAskText = nil
+
         if wsClient.isConnected {
             wsClient.sendChatMessage(text)
         } else {
             let history = Array(appState.messages.dropLast(2))
-            gatewayClient.sendMessage(text, conversationHistory: history, appState: appState)
+            gatewayClient.sendMessage(
+                text,
+                conversationHistory: history,
+                model: appState.selectedModel,
+                screenshot: screenshot,
+                appContext: appContext,
+                appState: appState
+            )
         }
     }
 
