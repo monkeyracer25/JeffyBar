@@ -32,7 +32,7 @@ struct ChatPopoverView: View {
             }
             .buttonStyle(.plain)
             .help("Open in window")
-            Button(action: openSettings) {
+            SettingsLink {
                 Image(systemName: "gear")
                     .font(.caption)
             }
@@ -154,7 +154,5 @@ struct ChatPopoverView: View {
         openWindow(id: "main-window")
     }
 
-    private func openSettings() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-    }
+
 }
