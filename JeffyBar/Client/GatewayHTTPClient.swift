@@ -124,72 +124,68 @@ class GatewayHTTPClient: ObservableObject {
         currentTask = nil
     }
 
-    /// Fetch a file's contents from the Mini by asking a lightweight model to read it.
-    /// Returns the raw file content extracted from the response's code fence, or nil on failure.
+    /// The workspace prefix to strip from absolute paths when building the file-server URL.
+    private static let workspacePrefix = "/Users/jeffyjeff/.openclaw/workspace/"
+
+    /// Fetch a file's contents from the Mini's file server (port 18790).
+    /// The file server serves files from the workspace directory.
     func fetchFileContent(path: String) async -> String? {
-        guard let url = URL(string: gatewayURL + "/v1/chat/completions") else { return nil }
+        print("[JeffyBar] fetchFileContent called with path: \(path)")
+
+        // 1. Extract the host from gatewayURL (e.g. "http://192.168.1.131:18789" → "192.168.1.131")
+        guard let gatewayComponents = URLComponents(string: gatewayURL),
+              let host = gatewayComponents.host, !host.isEmpty else {
+            print("[JeffyBar] fetchFileContent: could not extract host from gatewayURL: \(gatewayURL)")
+            return nil
+        }
+
+        // 2. Strip the workspace prefix to get the relative path
+        var relativePath = path
+        if relativePath.hasPrefix(Self.workspacePrefix) {
+            relativePath = String(relativePath.dropFirst(Self.workspacePrefix.count))
+        } else if relativePath.hasPrefix("/Users/jeffyjeff/.openclaw/workspace") {
+            // Without trailing slash
+            relativePath = String(relativePath.dropFirst("/Users/jeffyjeff/.openclaw/workspace".count))
+            if relativePath.hasPrefix("/") { relativePath = String(relativePath.dropFirst()) }
+        }
+        // Percent-encode the relative path for the URL
+        let encodedPath = relativePath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? relativePath
+
+        // 3. Build the file server URL
+        let fileServerURL = "http://\(host):18790/\(encodedPath)"
+        print("[JeffyBar] fetchFileContent: fetching from \(fileServerURL)")
+
+        guard let url = URL(string: fileServerURL) else {
+            print("[JeffyBar] fetchFileContent: invalid URL: \(fileServerURL)")
+            return nil
+        }
 
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.timeoutInterval = 30
-
-        let body: [String: Any] = [
-            "model": "anthropic/claude-haiku-4-5",
-            "stream": false,
-            "user": "jeffybar-file-fetch",
-            "messages": [
-                ["role": "user", "content": "Read the file at \(path) and return its complete contents inside a single code fence. No commentary, just the fenced content."]
-            ]
-        ]
+        request.httpMethod = "GET"
+        request.timeoutInterval = 15
 
         do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: body)
             let (data, response) = try await Self.urlSession.data(for: request)
 
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else { return nil }
-
-            // Parse non-streaming response
-            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let choices = json["choices"] as? [[String: Any]],
-               let message = choices.first?["message"] as? [String: Any],
-               let content = message["content"] as? String {
-                // Extract content from code fence
-                return extractCodeFenceContent(from: content)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("[JeffyBar] fetchFileContent: non-HTTP response")
+                return nil
             }
+
+            print("[JeffyBar] fetchFileContent: HTTP \(httpResponse.statusCode), \(data.count) bytes")
+
+            guard httpResponse.statusCode == 200 else {
+                print("[JeffyBar] fetchFileContent: server returned \(httpResponse.statusCode)")
+                return nil
+            }
+
+            let content = String(data: data, encoding: .utf8)
+            print("[JeffyBar] fetchFileContent: got \(content?.count ?? 0) chars")
+            return content
         } catch {
-            print("[JeffyBar] File fetch error: \(error.localizedDescription)")
+            print("[JeffyBar] fetchFileContent error: \(error.localizedDescription)")
+            return nil
         }
-        return nil
-    }
-
-    /// Extract the content inside the first code fence from a response string.
-    private func extractCodeFenceContent(from text: String) -> String? {
-        let lines = text.components(separatedBy: "\n")
-        var inFence = false
-        var content: [String] = []
-
-        for line in lines {
-            if line.hasPrefix("```") {
-                if !inFence {
-                    inFence = true
-                    continue
-                } else {
-                    // End of fence — return what we have
-                    return content.joined(separator: "\n")
-                }
-            } else if inFence {
-                content.append(line)
-            }
-        }
-
-        // If no code fence found, return the whole text (the model might have just dumped it)
-        if content.isEmpty && !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return text
-        }
-        return content.isEmpty ? nil : content.joined(separator: "\n")
     }
 
     func checkConnection(gatewayURL: String, token: String) async -> Bool {

@@ -47,8 +47,12 @@ class AppState: ObservableObject {
 
         let message = messages[lastIndex]
         if !message.isUser {
+            print("[JeffyBar] finalizeLastMessage: processing assistant message \(message.id)")
+            print("[JeffyBar] finalizeLastMessage: text preview: \(String(message.text.prefix(200)))")
+
             // 1. Parse inline code fence artifacts
             let artifacts = ArtifactParser.extractArtifacts(from: message.text, messageId: message.id)
+            print("[JeffyBar] finalizeLastMessage: found \(artifacts.count) inline artifacts")
             if !artifacts.isEmpty {
                 messageArtifacts[message.id] = artifacts
                 // Auto-open the first artifact in the floating panel
@@ -58,6 +62,7 @@ class AppState: ObservableObject {
             // 2. Detect file paths for remote fetching (only if no inline artifacts found)
             if artifacts.isEmpty {
                 let filePaths = ArtifactParser.extractFilePaths(from: message.text)
+                print("[JeffyBar] finalizeLastMessage: found \(filePaths.count) file paths: \(filePaths.map { $0.path })")
                 if !filePaths.isEmpty {
                     fetchRemoteFiles(filePaths, forMessage: message)
                 }
@@ -71,17 +76,23 @@ class AppState: ObservableObject {
         }
     }
 
-    /// Fetch file contents from the Mini via the gateway and create artifacts
+    /// Fetch file contents from the Mini via the file server and create artifacts
     private func fetchRemoteFiles(_ paths: [DetectedFilePath], forMessage message: ChatMessage) {
-        guard let client = httpClient else { return }
+        guard let client = httpClient else {
+            print("[JeffyBar] fetchRemoteFiles: httpClient is nil! Cannot fetch files.")
+            return
+        }
 
+        print("[JeffyBar] fetchRemoteFiles: fetching \(paths.count) file(s)")
         isFetchingFile = true
 
         Task {
             var fetchedArtifacts: [Artifact] = []
 
             for filePath in paths.prefix(3) {  // Limit to 3 files max
+                print("[JeffyBar] fetchRemoteFiles: requesting \(filePath.path) (lang: \(filePath.language))")
                 if let content = await client.fetchFileContent(path: filePath.path) {
+                    print("[JeffyBar] fetchRemoteFiles: got \(content.count) chars for \(filePath.displayName)")
                     let artifact: Artifact
                     if filePath.language == "html" && (content.contains("<html") || content.contains("<!DOCTYPE") || content.contains("<div")) {
                         artifact = Artifact(
@@ -103,15 +114,19 @@ class AppState: ObservableObject {
                         )
                     }
                     fetchedArtifacts.append(artifact)
+                } else {
+                    print("[JeffyBar] fetchRemoteFiles: FAILED to fetch content for \(filePath.path)")
                 }
             }
 
             await MainActor.run {
                 isFetchingFile = false
+                print("[JeffyBar] fetchRemoteFiles: completed with \(fetchedArtifacts.count) artifact(s)")
                 if !fetchedArtifacts.isEmpty {
                     let existing = messageArtifacts[message.id] ?? []
                     messageArtifacts[message.id] = existing + fetchedArtifacts
                     // Auto-open the first fetched artifact
+                    print("[JeffyBar] fetchRemoteFiles: showing artifact panel for '\(fetchedArtifacts[0].title)'")
                     WindowManager.shared.showArtifact(fetchedArtifacts[0])
                 }
             }
