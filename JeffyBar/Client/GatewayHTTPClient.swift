@@ -62,6 +62,10 @@ class GatewayHTTPClient: ObservableObject {
                 // timeoutInterval on the request is honoured as the per-packet idle timeout
                 request.timeoutInterval = 120
 
+                let systemMessage: [String: String] = [
+                    "role": "system",
+                    "content": "You are Jeff, Jonny's AI assistant. You respond DIRECTLY with content — never delegate, never spawn sub-agents, never say 'spawning Kodi'. When asked to create code, HTML, documents, or any content: produce it yourself inline in your response. Use markdown code fences (```language) for all code. You are helpful, direct, and cheeky."
+                ]
                 let historyMessages = conversationHistory.suffix(20).map { msg -> [String: String] in
                     ["role": msg.isUser ? "user" : "assistant", "content": msg.text]
                 }
@@ -71,7 +75,7 @@ class GatewayHTTPClient: ObservableObject {
                     "model": "anthropic/claude-opus-4-6",
                     "stream": true,
                     "user": "jonny-studio",
-                    "messages": historyMessages + [newUserMessage]
+                    "messages": [systemMessage] + historyMessages + [newUserMessage]
                 ]
                 request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
