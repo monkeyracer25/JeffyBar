@@ -62,10 +62,6 @@ class GatewayHTTPClient: ObservableObject {
                 // timeoutInterval on the request is honoured as the per-packet idle timeout
                 request.timeoutInterval = 120
 
-                let systemMessage: [String: String] = [
-                    "role": "system",
-                    "content": "You are Jeff, Jonny's AI assistant. You respond DIRECTLY with content — never delegate, never spawn sub-agents, never say 'spawning Kodi'. When asked to create code, HTML, documents, or any content: produce it yourself inline in your response. Use markdown code fences (```language) for all code. You are helpful, direct, and cheeky."
-                ]
                 let historyMessages = conversationHistory.suffix(20).map { msg -> [String: String] in
                     ["role": msg.isUser ? "user" : "assistant", "content": msg.text]
                 }
@@ -75,7 +71,7 @@ class GatewayHTTPClient: ObservableObject {
                     "model": "anthropic/claude-opus-4-6",
                     "stream": true,
                     "user": "jonny-studio",
-                    "messages": [systemMessage] + historyMessages + [newUserMessage]
+                    "messages": historyMessages + [newUserMessage]
                 ]
                 request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
@@ -126,6 +122,74 @@ class GatewayHTTPClient: ObservableObject {
     func cancelRequest() {
         currentTask?.cancel()
         currentTask = nil
+    }
+
+    /// Fetch a file's contents from the Mini by asking a lightweight model to read it.
+    /// Returns the raw file content extracted from the response's code fence, or nil on failure.
+    func fetchFileContent(path: String) async -> String? {
+        guard let url = URL(string: gatewayURL + "/v1/chat/completions") else { return nil }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.timeoutInterval = 30
+
+        let body: [String: Any] = [
+            "model": "anthropic/claude-haiku-4-5",
+            "stream": false,
+            "user": "jeffybar-file-fetch",
+            "messages": [
+                ["role": "user", "content": "Read the file at \(path) and return its complete contents inside a single code fence. No commentary, just the fenced content."]
+            ]
+        ]
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+            let (data, response) = try await Self.urlSession.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else { return nil }
+
+            // Parse non-streaming response
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let choices = json["choices"] as? [[String: Any]],
+               let message = choices.first?["message"] as? [String: Any],
+               let content = message["content"] as? String {
+                // Extract content from code fence
+                return extractCodeFenceContent(from: content)
+            }
+        } catch {
+            print("[JeffyBar] File fetch error: \(error.localizedDescription)")
+        }
+        return nil
+    }
+
+    /// Extract the content inside the first code fence from a response string.
+    private func extractCodeFenceContent(from text: String) -> String? {
+        let lines = text.components(separatedBy: "\n")
+        var inFence = false
+        var content: [String] = []
+
+        for line in lines {
+            if line.hasPrefix("```") {
+                if !inFence {
+                    inFence = true
+                    continue
+                } else {
+                    // End of fence — return what we have
+                    return content.joined(separator: "\n")
+                }
+            } else if inFence {
+                content.append(line)
+            }
+        }
+
+        // If no code fence found, return the whole text (the model might have just dumped it)
+        if content.isEmpty && !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return text
+        }
+        return content.isEmpty ? nil : content.joined(separator: "\n")
     }
 
     func checkConnection(gatewayURL: String, token: String) async -> Bool {

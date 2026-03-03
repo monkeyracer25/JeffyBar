@@ -16,6 +16,10 @@ struct JeffyBarApp: App {
                 .environmentObject(wsClient)
                 .environmentObject(bonjourDiscovery)
                 .frame(width: 420, height: 580)
+                .task {
+                    // Wire up httpClient reference for file fetching
+                    appState.httpClient = gatewayClient
+                }
         } label: {
             MenuBarIconLabel(appState: appState)
         }

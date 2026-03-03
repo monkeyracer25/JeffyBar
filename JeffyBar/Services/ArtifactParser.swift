@@ -1,7 +1,74 @@
 import Foundation
 
+struct DetectedFilePath: Equatable {
+    let path: String
+    let language: String  // inferred from extension
+
+    var displayName: String {
+        (path as NSString).lastPathComponent
+    }
+}
+
 struct ArtifactParser {
     static let minCodeLength = 10  // Promote code blocks above this length
+
+    // MARK: - File path detection
+
+    /// Detects file paths in Jeff's response text (e.g. /Users/jeffyjeff/.openclaw/workspace/foo.html)
+    static func extractFilePaths(from text: String) -> [DetectedFilePath] {
+        // Match absolute paths that look like workspace/project files
+        // Excludes common false positives like /bin, /usr, /etc
+        let pattern = #"(?:^|[\s`\"'(])(/Users/jeffyjeff/[^\s`\"')>\]]+\.(?:html|swift|py|js|ts|css|json|yaml|yml|sh|md|txt|rs|go|jsx|tsx|vue|rb|java|c|cpp|h|hpp))"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .anchorsMatchLines) else {
+            return []
+        }
+
+        let nsText = text as NSString
+        let matches = regex.matches(in: text, range: NSRange(location: 0, length: nsText.length))
+
+        var seen = Set<String>()
+        var paths: [DetectedFilePath] = []
+
+        for match in matches {
+            guard match.numberOfRanges > 1 else { continue }
+            let pathStr = nsText.substring(with: match.range(at: 1))
+
+            // Deduplicate
+            guard !seen.contains(pathStr) else { continue }
+            seen.insert(pathStr)
+
+            let ext = (pathStr as NSString).pathExtension.lowercased()
+            let lang = extensionToLanguage(ext)
+            paths.append(DetectedFilePath(path: pathStr, language: lang))
+        }
+
+        return paths
+    }
+
+    private static func extensionToLanguage(_ ext: String) -> String {
+        switch ext {
+        case "html", "htm": return "html"
+        case "swift": return "swift"
+        case "py": return "python"
+        case "js", "jsx": return "javascript"
+        case "ts", "tsx": return "typescript"
+        case "css": return "css"
+        case "json": return "json"
+        case "yaml", "yml": return "yaml"
+        case "sh", "bash": return "bash"
+        case "md": return "markdown"
+        case "rs": return "rust"
+        case "go": return "go"
+        case "rb": return "ruby"
+        case "java": return "java"
+        case "c", "h": return "c"
+        case "cpp", "hpp": return "cpp"
+        case "vue": return "vue"
+        default: return "text"
+        }
+    }
+
+    // MARK: - Code fence extraction
 
     static func extractArtifacts(from text: String, messageId: UUID) -> [Artifact] {
         var artifacts: [Artifact] = []

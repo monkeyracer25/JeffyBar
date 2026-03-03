@@ -30,6 +30,18 @@ struct MessageBubble: View {
                         }
                     }
 
+                    // File fetching indicator
+                    if appState.isFetchingFile && !message.isStreaming && !message.isUser {
+                        HStack(spacing: 6) {
+                            ProgressView()
+                                .controlSize(.mini)
+                            Text("Fetching file from Mini…")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 2)
+                    }
+
                     // Artifact buttons
                     if let artifacts = appState.messageArtifacts[message.id] {
                         ForEach(artifacts) { artifact in
