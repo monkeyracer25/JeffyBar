@@ -26,6 +26,8 @@ class WindowManager: ObservableObject {
         if !(artifactPanel?.isVisible ?? false) {
             artifactPanel?.center()
         }
+        // Activate the app so the floating panel is guaranteed to appear on top
+        NSApp.activate(ignoringOtherApps: true)
         artifactPanel?.makeKeyAndOrderFront(nil)
     }
 

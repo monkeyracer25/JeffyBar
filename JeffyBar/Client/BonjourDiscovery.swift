@@ -11,7 +11,13 @@ struct DiscoveredGateway: Identifiable, Equatable {
 
     var urlString: String {
         let scheme = tlsEnabled ? "https" : "http"
-        return "\(scheme)://\(host):\(port)"
+        // Bonjour service names used as .local hostnames can contain spaces,
+        // apostrophes, and parentheses — none of which are valid in a URL.
+        // Encode everything except the chars valid in a DNS hostname.
+        var allowed = CharacterSet.alphanumerics
+        allowed.insert(charactersIn: "-.")
+        let encodedHost = host.addingPercentEncoding(withAllowedCharacters: allowed) ?? host
+        return "\(scheme)://\(encodedHost):\(port)"
     }
 }
 

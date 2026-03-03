@@ -89,12 +89,14 @@ class GatewayHTTPClient: ObservableObject {
 
                 appState.connectionState = .connected
 
+                var finalized = false
                 for try await line in bytes.lines {
                     if Task.isCancelled { break }
                     guard line.hasPrefix("data: ") else { continue }
                     let data = String(line.dropFirst(6))
                     if data == "[DONE]" {
                         appState.finalizeLastMessage()
+                        finalized = true
                         break
                     }
                     if let jsonData = data.data(using: .utf8),
@@ -104,7 +106,8 @@ class GatewayHTTPClient: ObservableObject {
                     }
                 }
 
-                if !Task.isCancelled {
+                // Only finalize here if [DONE] was never received (e.g. stream cut short)
+                if !Task.isCancelled && !finalized {
                     appState.finalizeLastMessage()
                 }
 

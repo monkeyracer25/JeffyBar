@@ -1,7 +1,7 @@
 import Foundation
 
 struct ArtifactParser {
-    static let minCodeLength = 50  // Promote code blocks above this length
+    static let minCodeLength = 10  // Promote code blocks above this length
 
     static func extractArtifacts(from text: String, messageId: UUID) -> [Artifact] {
         var artifacts: [Artifact] = []

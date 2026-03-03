@@ -18,6 +18,7 @@
 		2183267CA7A89560D3A1E0FD /* HotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C805C56013CF9024B6731EEF /* HotKeyManager.swift */; };
 		23914F5CD5A6F1572337C434 /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = B193D643C733827B19CC5CC2 /* MessageBubble.swift */; };
 		3075DA4C7952BFFCF454A863 /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22B1760590E4D345FCEB914 /* WindowManager.swift */; };
+		D0CBEA1CE4C344A1B8DB05CE /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA465414762946ADBC4B68A3 /* SettingsWindowController.swift */; };
 		33CCB3FF33272927B8F52F0F /* AskJeffIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4603521AF60A53BAB353A860 /* AskJeffIntent.swift */; };
 		448FA094E0B09B5223F82AFE /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 53296CB6EF8CFD3BAD2846E9 /* HotKey */; };
 		47A4993799FB5D41CB652439 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E63FB86334562B3705B36C2 /* MainWindowView.swift */; };
@@ -72,6 +73,7 @@
 		CC02B0FE48FFBE1CA4211AA9 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		DCDDB95269BCCA15061EA385 /* GatewayWSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatewayWSClient.swift; sourceTree = "<group>"; };
 		F22B1760590E4D345FCEB914 /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
+		DA465414762946ADBC4B68A3 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		FF1317203765A578CC913CF0 /* CodeArtifactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeArtifactView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -161,6 +163,7 @@
 				29DDDA28E252915AEB95D974 /* LoginItemManager.swift */,
 				1736F7FDECC5AB0BBA9A6A5F /* NotificationManager.swift */,
 				F22B1760590E4D345FCEB914 /* WindowManager.swift */,
+				DA465414762946ADBC4B68A3 /* SettingsWindowController.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 				68DFB86E908926005863408C /* SettingsView.swift in Sources */,
 				FF66B33993FC727983F3965C /* StreamingIndicator.swift in Sources */,
 				3075DA4C7952BFFCF454A863 /* WindowManager.swift in Sources */,
+				D0CBEA1CE4C344A1B8DB05CE /* SettingsWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

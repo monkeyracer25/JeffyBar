@@ -7,7 +7,6 @@ struct ChatPopoverView: View {
     @EnvironmentObject var bonjourDiscovery: BonjourDiscovery
     @Environment(\.openWindow) private var openWindow
     @State private var messageText = ""
-    @State private var showSettings = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -18,13 +17,6 @@ struct ChatPopoverView: View {
             inputView
         }
         .background(Color(.windowBackgroundColor))
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
-                .environmentObject(appState)
-                .environmentObject(gatewayClient)
-                .environmentObject(wsClient)
-                .environmentObject(bonjourDiscovery)
-        }
     }
 
     private var headerView: some View {
@@ -41,7 +33,7 @@ struct ChatPopoverView: View {
             }
             .buttonStyle(.plain)
             .help("Open in window")
-            Button(action: { showSettings = true }) {
+            Button(action: openSettings) {
                 Image(systemName: "gear")
                     .font(.caption)
             }
@@ -164,5 +156,12 @@ struct ChatPopoverView: View {
         openWindow(id: "main-window")
     }
 
-
+    private func openSettings() {
+        SettingsWindowController.shared.show(
+            appState: appState,
+            gatewayClient: gatewayClient,
+            wsClient: wsClient,
+            bonjourDiscovery: bonjourDiscovery
+        )
+    }
 }

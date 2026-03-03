@@ -35,14 +35,9 @@ struct JeffyBarApp: App {
         .windowStyle(.titleBar)
         .windowToolbarStyle(.unified)
 
-        Settings {
-            SettingsView()
-                .environmentObject(appState)
-                .environmentObject(gatewayClient)
-                .environmentObject(wsClient)
-                .environmentObject(bonjourDiscovery)
-        }
     }
+    // NOTE: No Settings scene — we open settings as a standalone NSWindow
+    // via SettingsWindowController to avoid the SwiftUI popover+sheet dismissal bug.
 
     init() {
         // Register global hotkey ⌘+J
