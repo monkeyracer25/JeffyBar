@@ -34,11 +34,11 @@ class GatewayHTTPClient: ObservableObject {
     }()
 
     var gatewayURL: String {
-        UserDefaults.standard.string(forKey: "gatewayURL") ?? "http://localhost:18789"
+        UserDefaults.standard.string(forKey: "gatewayURL") ?? "http://192.168.1.131:18789"
     }
 
     var authToken: String {
-        (try? KeychainHelper.shared.get("gatewayToken")) ?? ""
+        (try? KeychainHelper.shared.get("gatewayToken")) ?? "546eacfc0b5794006378c230bf1a670d7ce68a9f43b3afae"
     }
 
     func sendMessage(
