@@ -38,6 +38,10 @@ struct MainWindowView: View {
             if !url.isEmpty && !token.isEmpty && !wsClient.isConnected {
                 wsClient.connect(gatewayURL: url, token: token, appState: appState)
             }
+            consumePendingSelectAndAskIfNeeded()
+        }
+        .onChange(of: appState.pendingSelectAndAskText) {
+            consumePendingSelectAndAskIfNeeded()
         }
     }
 
@@ -131,16 +135,21 @@ struct MainWindowView: View {
         guard !text.isEmpty, !appState.isStreaming else { return }
         messageText = ""
 
+        let conversationId = appState.ensureActiveConversation(modelId: appState.selectedModel.id)
         let userMsg = ChatMessage(role: .user, text: text)
         appState.addMessage(userMsg)
+        appState.saveUserMessage(userMsg, modelId: appState.selectedModel.id)
 
         let assistantMsg = ChatMessage(role: .assistant, text: "", isStreaming: true)
         appState.addMessage(assistantMsg)
         appState.isStreaming = true
+        appState.activeStreamingConversationId = conversationId
 
         // Capture pending context/screenshot
-        let screenshot = appState.pendingScreenshot
-        let appContext = appState.pendingAppContext
+        let includeScreenshots = UserDefaults.standard.object(forKey: "includeScreenshots") as? Bool ?? true
+        let includeAppContext = UserDefaults.standard.object(forKey: "includeAppContext") as? Bool ?? true
+        let screenshot = includeScreenshots ? appState.pendingScreenshot : nil
+        let appContext = includeAppContext ? appState.pendingAppContext : nil
         appState.pendingScreenshot = nil
         appState.pendingAppContext = nil
         appState.pendingSelectAndAskText = nil
@@ -171,9 +180,18 @@ struct MainWindowView: View {
             let lastIndex = appState.messages.count - 1
             appState.messages[lastIndex].isStreaming = false
         }
+        appState.activeStreamingConversationId = nil
     }
 
     private func clearHistory() {
         appState.messages = []
+    }
+
+    private func consumePendingSelectAndAskIfNeeded() {
+        guard !appState.isStreaming,
+              let pending = appState.pendingSelectAndAskText?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !pending.isEmpty else { return }
+        messageText = pending
+        sendMessage()
     }
 }

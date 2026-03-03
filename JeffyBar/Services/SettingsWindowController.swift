@@ -34,8 +34,8 @@ final class SettingsWindowController {
         let hostingController = NSHostingController(rootView: settingsView)
 
         let win = NSWindow(contentViewController: hostingController)
-        win.title = "JeffyBar Settings"
-        win.styleMask = [.titled, .closable, .miniaturizable]
+        win.title = "Settings"
+        win.styleMask = [.titled, .closable, .miniaturizable, .resizable]
         win.setFrameAutosaveName("JeffyBarSettings")
         // isReleasedWhenClosed = false so we can re-open it without crashing
         win.isReleasedWhenClosed = false

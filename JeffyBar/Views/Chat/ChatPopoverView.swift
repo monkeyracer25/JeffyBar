@@ -124,18 +124,37 @@ struct ChatPopoverView: View {
 
         messageText = ""
 
+        let conversationId = appState.ensureActiveConversation(modelId: appState.selectedModel.id)
         let userMsg = ChatMessage(role: .user, text: text)
         appState.addMessage(userMsg)
+        appState.saveUserMessage(userMsg, modelId: appState.selectedModel.id)
 
         let assistantMsg = ChatMessage(role: .assistant, text: "", isStreaming: true)
         appState.addMessage(assistantMsg)
         appState.isStreaming = true
+        appState.activeStreamingConversationId = conversationId
 
         if wsClient.isConnected {
             wsClient.sendChatMessage(text)
         } else {
             let history = Array(appState.messages.dropLast(2))
-            gatewayClient.sendMessage(text, conversationHistory: history, model: appState.selectedModel, appState: appState)
+            let includeScreenshots = UserDefaults.standard.object(forKey: "includeScreenshots") as? Bool ?? true
+            let includeAppContext = UserDefaults.standard.object(forKey: "includeAppContext") as? Bool ?? true
+            let screenshot = includeScreenshots ? appState.pendingScreenshot : nil
+            let appContext = includeAppContext ? appState.pendingAppContext : nil
+
+            appState.pendingScreenshot = nil
+            appState.pendingAppContext = nil
+            appState.pendingSelectAndAskText = nil
+
+            gatewayClient.sendMessage(
+                text,
+                conversationHistory: history,
+                model: appState.selectedModel,
+                screenshot: screenshot,
+                appContext: appContext,
+                appState: appState
+            )
         }
     }
 
@@ -150,6 +169,7 @@ struct ChatPopoverView: View {
             let lastIndex = appState.messages.count - 1
             appState.messages[lastIndex].isStreaming = false
         }
+        appState.activeStreamingConversationId = nil
     }
 
     private func openMainWindow() {

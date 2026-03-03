@@ -40,6 +40,7 @@ class AppState: ObservableObject {
     @Published var pendingSelectAndAskText: String?
     @Published var pendingAppContext: AppContext?
     @Published var pendingScreenshot: String?
+    @Published var activeStreamingConversationId: String?
 
     /// Reference to the HTTP client for file fetching (set by the app on init)
     var httpClient: GatewayHTTPClient?
@@ -61,6 +62,33 @@ class AppState: ObservableObject {
 
     func addMessage(_ message: ChatMessage) {
         messages.append(message)
+    }
+
+    func ensureActiveConversation(modelId: String) -> String {
+        let store = ConversationStore.shared
+        if let currentId = store.currentConversationId {
+            return currentId
+        }
+        let conversation = store.createConversation(modelId: modelId)
+        return conversation.id
+    }
+
+    func saveUserMessage(_ message: ChatMessage, modelId: String) {
+        let conversationId = ensureActiveConversation(modelId: modelId)
+        let record = MessageRecord(
+            id: message.id.uuidString,
+            conversationId: conversationId,
+            role: "user",
+            content: message.text,
+            timestamp: message.timestamp,
+            modelId: modelId
+        )
+        ConversationStore.shared.saveMessage(record)
+
+        if let conversation = ConversationStore.shared.conversations.first(where: { $0.id == conversationId }),
+           conversation.title == nil || conversation.title?.isEmpty == true {
+            ConversationStore.shared.autoTitle(conversationId, firstMessage: message.text)
+        }
     }
 
     func appendToLastMessage(delta: String) {
@@ -104,6 +132,19 @@ class AppState: ObservableObject {
                 NotificationManager.shared.notifyResponseReady(preview: preview)
             }
         }
+
+        if let conversationId = activeStreamingConversationId, !message.isUser, !message.text.isEmpty {
+            let record = MessageRecord(
+                id: message.id.uuidString,
+                conversationId: conversationId,
+                role: "assistant",
+                content: message.text,
+                timestamp: message.timestamp,
+                modelId: selectedModel.id
+            )
+            ConversationStore.shared.saveMessage(record)
+        }
+        activeStreamingConversationId = nil
     }
 
     /// Fetch file contents from the Mini via the file server and create artifacts
@@ -170,5 +211,6 @@ class AppState: ObservableObject {
         messages[lastIndex].isStreaming = false
         isStreaming = false
         connectionState = .error(error)
+        activeStreamingConversationId = nil
     }
 }

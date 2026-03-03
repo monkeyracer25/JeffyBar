@@ -14,6 +14,7 @@ class TextCaptureManager {
               let element = focused else { return nil }
 
         var text: CFTypeRef?
+        // swiftlint:disable:next force_cast
         guard AXUIElementCopyAttributeValue(element as! AXUIElement, kAXSelectedTextAttribute as CFString, &text) == .success,
               let str = text as? String, !str.isEmpty else { return nil }
         return str
@@ -25,7 +26,7 @@ class TextCaptureManager {
         let prevCount = pb.changeCount
         let saved = pb.string(forType: .string)
 
-        let src = CGEventSource(stateID: .hidSystemState)
+        guard let src = CGEventSource(stateID: .hidSystemState) else { return nil }
         let down = CGEvent(keyboardEventSource: src, virtualKey: 0x08, keyDown: true)
         down?.flags = .maskCommand
         down?.post(tap: .cghidEventTap)

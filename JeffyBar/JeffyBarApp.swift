@@ -43,8 +43,13 @@ struct JeffyBarApp: App {
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .selectAndAsk)) { _ in
                     Task {
+                        let defaults = UserDefaults.standard
+                        let isSelectAndAskEnabled = defaults.object(forKey: "selectAndAskEnabled") as? Bool ?? true
+                        guard isSelectAndAskEnabled else { return }
+
                         // IMPORTANT: Capture BEFORE activating JeffyBar
-                        let context = AppContextManager.shared.captureCurrentContext()
+                        let includeAppContext = defaults.object(forKey: "includeAppContext") as? Bool ?? true
+                        let context = includeAppContext ? AppContextManager.shared.captureCurrentContext() : nil
                         let selectedText = await TextCaptureManager.shared.captureSelectedText()
 
                         openWindow(id: "main-window")
@@ -58,6 +63,10 @@ struct JeffyBarApp: App {
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .captureScreenshot)) { _ in
                     Task {
+                        let defaults = UserDefaults.standard
+                        let includeScreenshots = defaults.object(forKey: "includeScreenshots") as? Bool ?? true
+                        guard includeScreenshots else { return }
+
                         guard let image = await ScreenshotCaptureManager.shared.captureActiveWindow() else {
                             print("Screenshot capture failed")
                             return
@@ -69,7 +78,8 @@ struct JeffyBarApp: App {
                         }
 
                         // Capture context (app + window title)
-                        let context = AppContextManager.shared.captureCurrentContext()
+                        let includeAppContext = defaults.object(forKey: "includeAppContext") as? Bool ?? true
+                        let context = includeAppContext ? AppContextManager.shared.captureCurrentContext() : nil
 
                         // Activate Jeff and populate with screenshot + context
                         openWindow(id: "main-window")

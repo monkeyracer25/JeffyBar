@@ -18,14 +18,22 @@ class ConversationStore: ObservableObject {
 
     func createConversation(modelId: String) -> ConversationRecord {
         let c = ConversationRecord(modelId: modelId)
-        try? db.write { db in try c.insert(db) }
+        do {
+            try db.write { db in try c.insert(db) }
+        } catch {
+            print("[ConversationStore] Failed to create conversation: \(error)")
+        }
         currentConversationId = c.id
         loadConversations()
         return c
     }
 
     func deleteConversation(_ id: String) {
-        _ = try? db.write { db in try ConversationRecord.deleteOne(db, id: id) }
+        do {
+            _ = try db.write { db in try ConversationRecord.deleteOne(db, id: id) }
+        } catch {
+            print("[ConversationStore] Failed to delete conversation \(id): \(error)")
+        }
         if currentConversationId == id { currentConversationId = nil }
         loadConversations()
     }
@@ -38,20 +46,28 @@ class ConversationStore: ObservableObject {
     }
 
     func saveMessage(_ msg: MessageRecord) {
-        try? db.write { db in
-            try msg.insert(db)
-            try ConversationRecord.filter(id: msg.conversationId).updateAll(db, [
-                Column("updatedAt").set(to: Date()),
-                Column("messageCount").set(to: Column("messageCount") + 1),
-                Column("lastMessagePreview").set(to: String(msg.content.prefix(100)))
-            ])
+        do {
+            try db.write { db in
+                try msg.insert(db)
+                try ConversationRecord.filter(id: msg.conversationId).updateAll(db, [
+                    Column("updatedAt").set(to: Date()),
+                    Column("messageCount").set(to: Column("messageCount") + 1),
+                    Column("lastMessagePreview").set(to: String(msg.content.prefix(100)))
+                ])
+            }
+        } catch {
+            print("[ConversationStore] Failed to save message \(msg.id): \(error)")
         }
         loadConversations()
     }
 
     func updateTitle(_ convId: String, title: String) {
-        try? db.write { db in
-            try ConversationRecord.filter(id: convId).updateAll(db, Column("title").set(to: title))
+        do {
+            try db.write { db in
+                try ConversationRecord.filter(id: convId).updateAll(db, Column("title").set(to: title))
+            }
+        } catch {
+            print("[ConversationStore] Failed to update title for \(convId): \(error)")
         }
         loadConversations()
     }

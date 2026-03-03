@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreGraphics
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
@@ -20,6 +21,7 @@ struct SettingsView: View {
     @State private var includeAppContext = UserDefaults.standard.object(forKey: "includeAppContext") as? Bool ?? true
     @State private var includeScreenshots = UserDefaults.standard.object(forKey: "includeScreenshots") as? Bool ?? true
     @State private var selectAndAskEnabled = UserDefaults.standard.object(forKey: "selectAndAskEnabled") as? Bool ?? true
+    @State private var hasScreenRecordingPermission = CGPreflightScreenCaptureAccess()
 
     var body: some View {
         Form {
@@ -112,6 +114,19 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Screen Recording") {
+                if hasScreenRecordingPermission {
+                    Label("Screen Recording: Granted", systemImage: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                } else {
+                    Button("Grant Screen Recording Permission") {
+                        _ = CGRequestScreenCaptureAccess()
+                        hasScreenRecordingPermission = CGPreflightScreenCaptureAccess()
+                    }
+                    .help("Required for screenshot capture hotkey")
+                }
+            }
+
             Section("Bonjour Discovery") {
                 if bonjourDiscovery.discoveredGateways.isEmpty {
                     HStack {
@@ -174,6 +189,7 @@ struct SettingsView: View {
         .frame(width: 480, height: 600)
         .onAppear {
             bonjourDiscovery.startBrowsing()
+            hasScreenRecordingPermission = CGPreflightScreenCaptureAccess()
         }
         .onDisappear {
             bonjourDiscovery.stopBrowsing()

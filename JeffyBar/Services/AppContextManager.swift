@@ -62,8 +62,10 @@ class AppContextManager: ObservableObject {
         let appElement = AXUIElementCreateApplication(pid)
         var windowValue: CFTypeRef?
         guard AXUIElementCopyAttributeValue(appElement, kAXFocusedWindowAttribute as CFString, &windowValue) == .success else { return nil }
+        guard let windowRef = windowValue else { return nil }
         var titleValue: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(windowValue as! AXUIElement, kAXTitleAttribute as CFString, &titleValue) == .success else { return nil }
+        // swiftlint:disable:next force_cast
+        guard AXUIElementCopyAttributeValue(windowRef as! AXUIElement, kAXTitleAttribute as CFString, &titleValue) == .success else { return nil }
         return titleValue as? String
     }
 
@@ -98,6 +100,9 @@ class AppContextManager: ObservableObject {
         var error: NSDictionary?
         guard let appleScript = NSAppleScript(source: script) else { return nil }
         let result = appleScript.executeAndReturnError(&error)
+        if let error {
+            print("[AppContext] AppleScript URL extraction failed: \(error)")
+        }
         return result.stringValue
     }
 }
