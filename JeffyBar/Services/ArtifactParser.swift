@@ -16,30 +16,40 @@ struct ArtifactParser {
 
     /// Detects file paths in Jeff's response text (e.g. /Users/jeffyjeff/.openclaw/workspace/foo.html)
     static func extractFilePaths(from text: String) -> [DetectedFilePath] {
-        // Match absolute paths that look like workspace/project files
-        // Excludes common false positives like /bin, /usr, /etc
-        let pattern = #"(?:^|[\s`\"'(])(/Users/jeffyjeff/[^\s`\"')>\]]+\.(?:html|swift|py|js|ts|css|json|yaml|yml|sh|md|txt|rs|go|jsx|tsx|vue|rb|java|c|cpp|h|hpp))"#
-        guard let regex = try? NSRegularExpression(pattern: pattern, options: .anchorsMatchLines) else {
-            return []
-        }
-
-        let nsText = text as NSString
-        let matches = regex.matches(in: text, range: NSRange(location: 0, length: nsText.length))
+        // Match absolute paths AND ~/shorthand paths
+        let patterns = [
+            #"(?:^|[\s`\"'(])(/Users/jeffyjeff/[^\s`\"')>\]]+\.(?:html|swift|py|js|ts|css|json|yaml|yml|sh|md|txt|rs|go|jsx|tsx|vue|rb|java|c|cpp|h|hpp))"#,
+            #"(?:^|[\s`\"'(])(~/[^\s`\"')>\]]+\.(?:html|swift|py|js|ts|css|json|yaml|yml|sh|md|txt|rs|go|jsx|tsx|vue|rb|java|c|cpp|h|hpp))"#
+        ]
 
         var seen = Set<String>()
         var paths: [DetectedFilePath] = []
 
-        for match in matches {
-            guard match.numberOfRanges > 1 else { continue }
-            let pathStr = nsText.substring(with: match.range(at: 1))
+        for pattern in patterns {
+            guard let regex = try? NSRegularExpression(pattern: pattern, options: .anchorsMatchLines) else { continue }
+            let nsText = text as NSString
+            let matches = regex.matches(in: text, range: NSRange(location: 0, length: nsText.length))
 
-            // Deduplicate
-            guard !seen.contains(pathStr) else { continue }
-            seen.insert(pathStr)
+            for match in matches {
+                guard match.numberOfRanges > 1 else { continue }
+                var pathStr = nsText.substring(with: match.range(at: 1))
 
-            let ext = (pathStr as NSString).pathExtension.lowercased()
-            let lang = extensionToLanguage(ext)
-            paths.append(DetectedFilePath(path: pathStr, language: lang))
+                // Expand ~ to /Users/jeffyjeff
+                if pathStr.hasPrefix("~/") {
+                    pathStr = "/Users/jeffyjeff" + pathStr.dropFirst(1)
+                }
+                // Expand ~/workspace to ~/.openclaw/workspace
+                if pathStr.contains("/Users/jeffyjeff/workspace/") && !pathStr.contains(".openclaw") {
+                    pathStr = pathStr.replacingOccurrences(of: "/Users/jeffyjeff/workspace/", with: "/Users/jeffyjeff/.openclaw/workspace/")
+                }
+
+                guard !seen.contains(pathStr) else { continue }
+                seen.insert(pathStr)
+
+                let ext = (pathStr as NSString).pathExtension.lowercased()
+                let lang = extensionToLanguage(ext)
+                paths.append(DetectedFilePath(path: pathStr, language: lang))
+            }
         }
 
         return paths
