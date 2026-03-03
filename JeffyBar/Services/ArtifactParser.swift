@@ -1,7 +1,7 @@
 import Foundation
 
 struct ArtifactParser {
-    static let minCodeLength = 150  // Only promote code blocks above this length
+    static let minCodeLength = 50  // Promote code blocks above this length
 
     static func extractArtifacts(from text: String, messageId: UUID) -> [Artifact] {
         var artifacts: [Artifact] = []
@@ -36,15 +36,26 @@ struct ArtifactParser {
                     inCodeBlock = false
                     let code = currentCode.joined(separator: "\n")
 
-                    if code.count >= minCodeLength && !currentLanguage.isEmpty {
+                    if code.count >= minCodeLength {
                         blockCount += 1
                         let lang = currentLanguage.isEmpty ? "text" : currentLanguage
-                        let title = blockCount == 1 ? "\(lang.capitalized) Code" : "\(lang.capitalized) Code \(blockCount)"
-                        artifacts.append(Artifact(
-                            type: .code(code, language: lang),
-                            title: title,
-                            sourceMessageId: messageId
-                        ))
+
+                        // If it's HTML, treat as HTML artifact (renders in WebView)
+                        if lang == "html" && (code.contains("<html") || code.contains("<!DOCTYPE") || code.contains("<div") || code.contains("<body")) {
+                            let title = extractHTMLTitle(from: code) ?? "HTML Document"
+                            artifacts.append(Artifact(
+                                type: .html(code),
+                                title: title,
+                                sourceMessageId: messageId
+                            ))
+                        } else {
+                            let title = blockCount == 1 ? "\(lang.capitalized) Code" : "\(lang.capitalized) Code \(blockCount)"
+                            artifacts.append(Artifact(
+                                type: .code(code, language: lang),
+                                title: title,
+                                sourceMessageId: messageId
+                            ))
+                        }
                     }
                     currentLanguage = ""
                     currentCode = []

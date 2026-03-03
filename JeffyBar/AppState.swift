@@ -43,10 +43,12 @@ class AppState: ObservableObject {
 
         let message = messages[lastIndex]
         if !message.isUser {
-            // Parse artifacts
+            // Parse artifacts and auto-open the first one
             let artifacts = ArtifactParser.extractArtifacts(from: message.text, messageId: message.id)
             if !artifacts.isEmpty {
                 messageArtifacts[message.id] = artifacts
+                // Auto-open the first artifact in the floating panel
+                WindowManager.shared.showArtifact(artifacts[0])
             }
 
             // Notify if app not in foreground
