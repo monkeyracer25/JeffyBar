@@ -68,7 +68,7 @@ class GatewayHTTPClient: ObservableObject {
                 let newUserMessage: [String: String] = ["role": "user", "content": text]
 
                 let body: [String: Any] = [
-                    "model": "openclaw:main",
+                    "model": "anthropic/claude-opus-4-6",
                     "stream": true,
                     "user": "jonny-studio",
                     "messages": historyMessages + [newUserMessage]
