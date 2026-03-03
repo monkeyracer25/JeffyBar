@@ -23,6 +23,16 @@ struct ChatCompletionChunk: Decodable {
 class GatewayHTTPClient: ObservableObject {
     private var currentTask: Task<Void, Never>?
 
+    /// Dedicated URLSession with generous timeouts for LLM streaming responses.
+    /// - timeoutIntervalForRequest: max idle time between data packets (120s)
+    /// - timeoutIntervalForResource: max total duration for a single resource (600s)
+    private static let urlSession: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 120
+        config.timeoutIntervalForResource = 600
+        return URLSession(configuration: config)
+    }()
+
     var gatewayURL: String {
         UserDefaults.standard.string(forKey: "gatewayURL") ?? "http://localhost:18789"
     }
@@ -49,6 +59,7 @@ class GatewayHTTPClient: ObservableObject {
                 request.httpMethod = "POST"
                 request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                // timeoutInterval on the request is honoured as the per-packet idle timeout
                 request.timeoutInterval = 120
 
                 let historyMessages = conversationHistory.suffix(20).map { msg -> [String: String] in
@@ -64,7 +75,7 @@ class GatewayHTTPClient: ObservableObject {
                 ]
                 request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-                let (bytes, response) = try await URLSession.shared.bytes(for: request)
+                let (bytes, response) = try await Self.urlSession.bytes(for: request)
 
                 guard let httpResponse = response as? HTTPURLResponse else {
                     appState.setLastMessageError("Invalid response")
@@ -111,21 +122,14 @@ class GatewayHTTPClient: ObservableObject {
     }
 
     func checkConnection(gatewayURL: String, token: String) async -> Bool {
-        guard let url = URL(string: gatewayURL + "/v1/chat/completions") else { return false }
+        guard let url = URL(string: gatewayURL + "/v1/models") else { return false }
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.timeoutInterval = 10
-        let body: [String: Any] = [
-            "model": "openclaw:main",
-            "stream": false,
-            "messages": [["role": "user", "content": "ping"]]
-        ]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        request.timeoutInterval = 30
 
         do {
-            let (_, response) = try await URLSession.shared.data(for: request)
+            let (_, response) = try await Self.urlSession.data(for: request)
             return (response as? HTTPURLResponse)?.statusCode == 200
         } catch {
             return false

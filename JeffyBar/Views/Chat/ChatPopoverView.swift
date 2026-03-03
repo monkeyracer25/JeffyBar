@@ -4,8 +4,10 @@ struct ChatPopoverView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var gatewayClient: GatewayHTTPClient
     @EnvironmentObject var wsClient: GatewayWSClient
+    @EnvironmentObject var bonjourDiscovery: BonjourDiscovery
     @Environment(\.openWindow) private var openWindow
     @State private var messageText = ""
+    @State private var showSettings = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -16,6 +18,13 @@ struct ChatPopoverView: View {
             inputView
         }
         .background(Color(.windowBackgroundColor))
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+                .environmentObject(appState)
+                .environmentObject(gatewayClient)
+                .environmentObject(wsClient)
+                .environmentObject(bonjourDiscovery)
+        }
     }
 
     private var headerView: some View {
@@ -32,11 +41,12 @@ struct ChatPopoverView: View {
             }
             .buttonStyle(.plain)
             .help("Open in window")
-            SettingsLink {
+            Button(action: { showSettings = true }) {
                 Image(systemName: "gear")
                     .font(.caption)
             }
             .buttonStyle(.plain)
+            .help("Settings")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
