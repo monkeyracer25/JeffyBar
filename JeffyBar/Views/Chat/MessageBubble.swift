@@ -3,6 +3,7 @@ import MarkdownUI
 
 struct MessageBubble: View {
     let message: ChatMessage
+    @EnvironmentObject var appState: AppState
 
     var body: some View {
         if message.isUser {
@@ -26,6 +27,28 @@ struct MessageBubble: View {
                             .textSelection(.enabled)
                         if message.isStreaming {
                             StreamingIndicator()
+                        }
+                    }
+
+                    // Artifact buttons
+                    if let artifacts = appState.messageArtifacts[message.id] {
+                        ForEach(artifacts) { artifact in
+                            Button(action: {
+                                WindowManager.shared.showArtifact(artifact)
+                            }) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: artifact.type.icon)
+                                        .font(.caption)
+                                    Text(artifact.title)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Color.accentColor.opacity(0.1))
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
