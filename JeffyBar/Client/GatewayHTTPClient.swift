@@ -62,21 +62,21 @@ class GatewayHTTPClient: ObservableObject {
                 // timeoutInterval on the request is honoured as the per-packet idle timeout
                 request.timeoutInterval = 120
 
-                let systemMessage: [String: String] = [
-                    "role": "system",
-                    "content": "You are Jeff, Jonny's AI assistant. Cheeky, direct, efficient. CRITICAL RULE: When creating ANY content (code, HTML, documents, scripts), you MUST include the complete content directly in your response using markdown code fences (```language). NEVER use tools to create files. NEVER say 'I created a file' without showing the content. Always return content inline in code fences."
-                ]
                 let historyMessages = conversationHistory.suffix(20).map { msg -> [String: String] in
                     ["role": msg.isUser ? "user" : "assistant", "content": msg.text]
                 }
-                let newUserMessage: [String: String] = ["role": "user", "content": text]
+                // Append inline instruction so the model returns content in code fences
+                // rather than creating files via tools. This must live in the user message
+                // because system-level hints get overridden by the gateway's own system prompt.
+                let artifactInstruction = "\n\n[Note: When creating content, return it directly in your response using markdown code fences (```language). Do not create files with tools.]"
+                let newUserMessage: [String: String] = ["role": "user", "content": text + artifactInstruction]
                 let userId = "jeffybar-\(Int(Date().timeIntervalSince1970))"
 
                 let body: [String: Any] = [
                     "model": "anthropic/claude-opus-4-6",
                     "stream": true,
                     "user": userId,
-                    "messages": [systemMessage] + historyMessages + [newUserMessage]
+                    "messages": historyMessages + [newUserMessage]
                 ]
                 request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
