@@ -192,6 +192,6 @@ struct MainWindowView: View {
               let pending = appState.pendingSelectAndAskText?.trimmingCharacters(in: .whitespacesAndNewlines),
               !pending.isEmpty else { return }
         messageText = pending
-        sendMessage()
+        appState.pendingSelectAndAskText = nil
     }
 }
