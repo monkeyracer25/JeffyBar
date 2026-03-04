@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import CoreGraphics
 
 @MainActor @Observable
 class AppCoordinator {
@@ -72,19 +73,29 @@ class AppCoordinator {
         let includeScreenshots = defaults.object(forKey: "includeScreenshots") as? Bool ?? true
         guard includeScreenshots else { return }
 
+        // Check screen recording permission first
+        guard CGPreflightScreenCaptureAccess() else {
+            CGRequestScreenCaptureAccess()
+            print("[Screenshot] Screen recording permission not granted")
+            return
+        }
+
+        // Capture context BEFORE activating JeffyBar (frontmost app changes)
+        let includeAppContext = defaults.object(forKey: "includeAppContext") as? Bool ?? true
+        let context = includeAppContext ? AppContextManager.shared.captureCurrentContext() : nil
+
+        // Capture the screenshot while the target app is still frontmost
         guard let image = await ScreenshotCaptureManager.shared.captureActiveWindow() else {
-            print("Screenshot capture failed")
+            print("[Screenshot] Capture failed")
             return
         }
 
         guard let base64 = ScreenshotCaptureManager.shared.imageToBase64(image) else {
-            print("Failed to encode screenshot")
+            print("[Screenshot] Failed to encode")
             return
         }
 
-        let includeAppContext = defaults.object(forKey: "includeAppContext") as? Bool ?? true
-        let context = includeAppContext ? AppContextManager.shared.captureCurrentContext() : nil
-
+        // NOW open the window and set pending data
         openMainWindow()
 
         appState.pendingScreenshot = base64

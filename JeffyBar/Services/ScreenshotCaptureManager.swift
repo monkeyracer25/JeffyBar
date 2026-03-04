@@ -10,6 +10,7 @@ class ScreenshotCaptureManager: ObservableObject {
     private init() {}
 
     /// Capture the active window (simple one-shot)
+    /// Skips JeffyBar's own windows — captures the most recent non-JeffyBar window
     func captureActiveWindow() async -> NSImage? {
         isCapturing = true
         defer { isCapturing = false }
@@ -18,19 +19,19 @@ class ScreenshotCaptureManager: ObservableObject {
             // Get available shareable content
             let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
 
-            // Get the frontmost application
-            guard let frontApp = NSWorkspace.shared.frontmostApplication else {
-                print("[Screenshot] No frontmost app")
+            let myBundleId = Bundle.main.bundleIdentifier ?? "com.jeffybar.JeffyBar"
+
+            // Find the first non-JeffyBar window (ordered by layer/recency)
+            guard let targetWindow = content.windows.first(where: { window in
+                window.owningApplication?.bundleIdentifier != myBundleId
+                && window.frame.width > 100
+                && window.frame.height > 100
+            }) else {
+                print("[Screenshot] No suitable window found")
                 return nil
             }
 
-            // Find the window for this application
-            guard let targetWindow = content.windows.first(where: { window in
-                window.owningApplication?.bundleIdentifier == frontApp.bundleIdentifier
-            }) else {
-                print("[Screenshot] No window found for \(frontApp.localizedName ?? "app")")
-                return nil
-            }
+            print("[Screenshot] Capturing: \(targetWindow.owningApplication?.applicationName ?? "unknown") - \(targetWindow.title ?? "untitled")")
 
             // Create a content filter for this single window
             let filter = SCContentFilter(desktopIndependentWindow: targetWindow)

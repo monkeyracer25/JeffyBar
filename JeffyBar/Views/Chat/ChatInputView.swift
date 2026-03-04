@@ -18,6 +18,53 @@ struct ChatInputView: View {
                 .environmentObject(appState)
                 .environmentObject(contextManager)
 
+            // Screenshot indicator
+            if appState.pendingScreenshot != nil {
+                HStack(spacing: 6) {
+                    Image(systemName: "camera.viewfinder")
+                        .foregroundStyle(.blue)
+                    Text("Screenshot attached")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button {
+                        appState.pendingScreenshot = nil
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(Color.blue.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+
+            // App context indicator
+            if let context = appState.pendingAppContext {
+                HStack(spacing: 6) {
+                    Image(systemName: "app.badge")
+                        .foregroundStyle(.orange)
+                    Text(context.asSystemContext())
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                    Spacer()
+                    Button {
+                        appState.pendingAppContext = nil
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(Color.orange.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+
             // Attached files chips
             if !attachedFiles.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
