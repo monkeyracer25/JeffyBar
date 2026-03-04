@@ -40,6 +40,7 @@
 		819CE39F09F48DC83167809B /* HTMLArtifactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 687EAA55E020208DAB762F8D /* HTMLArtifactView.swift */; };
 		919505A91C7DF8AA90C00331 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3548B562910EB64AD53D31 /* DatabaseManager.swift */; };
 		9904B23BAED3F94AAC72C94B /* ArtifactPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B794CEC1797E787C9EF7E /* ArtifactPanelView.swift */; };
+		99810999AE82F7E16FCEEC74 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA5972126E6EE50071E6494 /* AppCoordinator.swift */; };
 		A8654E8BD90C173B54055549 /* QuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABEBC6CAE4B80DAC054F72E /* QuickActionsView.swift */; };
 		A9CF12961B4CDAED1745B3ED /* ArtifactRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCF26E94F0B95A0E9AAC4098 /* ArtifactRecord.swift */; };
 		AB8885E11482B6C166683914 /* AIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EB20855B009C08FC8C0324 /* AIModel.swift */; };
@@ -90,6 +91,7 @@
 		8C4B794CEC1797E787C9EF7E /* ArtifactPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtifactPanelView.swift; sourceTree = "<group>"; };
 		8C4D1D65C89772CFE38BCE9D /* ConversationSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSidebarView.swift; sourceTree = "<group>"; };
 		8DBC1F63B093F83FE9D4B586 /* JeffyBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JeffyBarApp.swift; sourceTree = "<group>"; };
+		8EA5972126E6EE50071E6494 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		9444454EB420A7698CC01F04 /* ArtifactPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtifactPanel.swift; sourceTree = "<group>"; };
 		96B019F27DED657C00F785A3 /* JeffShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JeffShortcuts.swift; sourceTree = "<group>"; };
 		A11F5D373E50342FAD2DC499 /* JeffyBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JeffyBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -195,6 +197,7 @@
 			children = (
 				FADC90FC865E017279D22830 /* AccessibilityManager.swift */,
 				4D2A8030146C574D00CE03DF /* AppContextManager.swift */,
+				8EA5972126E6EE50071E6494 /* AppCoordinator.swift */,
 				40768F944F70D41973DBD60D /* ArtifactParser.swift */,
 				D2A1CD3628A01303393FEDBB /* ClipboardManager.swift */,
 				C805C56013CF9024B6731EEF /* HotKeyManager.swift */,
@@ -340,6 +343,7 @@
 				AB8885E11482B6C166683914 /* AIModel.swift in Sources */,
 				3F79A0B94DAAB542D6053EFD /* AccessibilityManager.swift in Sources */,
 				1CEA3B4360BCEFDFB883310D /* AppContextManager.swift in Sources */,
+				99810999AE82F7E16FCEEC74 /* AppCoordinator.swift in Sources */,
 				FCB82AD7C8CAF94316C196B1 /* AppState.swift in Sources */,
 				B4BF6EF0E5C3D3CB68678B69 /* Artifact.swift in Sources */,
 				1BCEB0CFD6D9FE17CD2FA44E /* ArtifactPanel.swift in Sources */,

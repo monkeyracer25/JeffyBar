@@ -27,6 +27,12 @@ struct ChatPopoverView: View {
                 .font(.headline)
             Spacer()
             connectionIndicator
+            Button(action: newChat) {
+                Image(systemName: "plus.bubble")
+                    .font(.caption)
+            }
+            .buttonStyle(.plain)
+            .help("New Chat")
             Button(action: openMainWindow) {
                 Image(systemName: "arrow.up.left.and.arrow.down.right")
                     .font(.caption)
@@ -135,7 +141,7 @@ struct ChatPopoverView: View {
         appState.activeStreamingConversationId = conversationId
 
         if wsClient.isConnected {
-            wsClient.sendChatMessage(text)
+            wsClient.sendChatMessage(text, model: appState.selectedModel.id)
         } else {
             let history = Array(appState.messages.dropLast(2))
             let includeScreenshots = UserDefaults.standard.object(forKey: "includeScreenshots") as? Bool ?? true
@@ -170,6 +176,11 @@ struct ChatPopoverView: View {
             appState.messages[lastIndex].isStreaming = false
         }
         appState.activeStreamingConversationId = nil
+    }
+
+    private func newChat() {
+        let conv = ConversationStore.shared.createConversation(modelId: appState.selectedModel.id)
+        appState.loadConversation(conv.id)
     }
 
     private func openMainWindow() {

@@ -38,14 +38,18 @@ class GatewayWSClient: ObservableObject {
 
     // MARK: - Public API
 
-    func sendChatMessage(_ text: String) {
+    func sendChatMessage(_ text: String, model: String? = nil) {
         guard isConnected else { return }
         let id = nextId()
+        var params: [String: Any] = ["message": text]
+        if let model = model {
+            params["model"] = model
+        }
         let req: [String: Any] = [
             "type": "req",
             "id": id,
             "method": "chat.send",
-            "params": ["message": text]
+            "params": params
         ]
         sendFrame(req)
         isStreaming = true

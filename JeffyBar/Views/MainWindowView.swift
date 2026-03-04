@@ -155,7 +155,7 @@ struct MainWindowView: View {
         appState.pendingSelectAndAskText = nil
 
         if wsClient.isConnected {
-            wsClient.sendChatMessage(text)
+            wsClient.sendChatMessage(text, model: appState.selectedModel.id)
         } else {
             let history = Array(appState.messages.dropLast(2))
             gatewayClient.sendMessage(
