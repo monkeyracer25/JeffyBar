@@ -73,32 +73,23 @@ class GatewayHTTPClient: ObservableObject {
                     ["role": msg.isUser ? "user" : "assistant", "content": msg.text]
                 }
 
-                // Build user message content — use content array if screenshot is present
-                let newUserMessage: [String: Any]
-                if screenshot != nil || appContext != nil {
-                    var contentArray: [[String: Any]] = []
-
-                    // Text content with optional context prefix
-                    var userContent = text
-                    if let context = appContext {
-                        userContent = context.asSystemContext() + "\n\n" + text
-                    }
-                    contentArray.append(["type": "text", "text": userContent])
-
-                    // Add screenshot if available
-                    if let base64 = screenshot {
-                        contentArray.append([
-                            "type": "image_url",
-                            "image_url": [
-                                "url": "data:image/png;base64,\(base64)"
-                            ]
-                        ])
-                    }
-
-                    newUserMessage = ["role": "user", "content": contentArray]
-                } else {
-                    newUserMessage = ["role": "user", "content": text]
+                // Build user message with optional context prefix
+                var userContent = text
+                if let context = appContext {
+                    userContent = context.asSystemContext() + "\n\n" + text
                 }
+
+                // If screenshot is present, save to temp file and include path in message
+                if let base64 = screenshot, let imageData = Data(base64Encoded: base64) {
+                    let tempDir = FileManager.default.temporaryDirectory
+                    let filename = "jeffybar-screenshot-\(Int(Date().timeIntervalSince1970)).png"
+                    let tempURL = tempDir.appendingPathComponent(filename)
+                    try? imageData.write(to: tempURL)
+                    userContent = "[Screenshot captured: \(tempURL.path)]\n\n" + userContent
+                    print("[GatewayHTTP] Screenshot saved to \(tempURL.path) (\(imageData.count) bytes)")
+                }
+
+                let newUserMessage: [String: Any] = ["role": "user", "content": userContent]
 
                 let body: [String: Any] = [
                     "model": model.id,
