@@ -17,6 +17,7 @@ class GatewayWSClient: ObservableObject {
 
     private var gatewayURL: String = ""
     private var authToken: String = ""
+    private var reconnectAttempts: Int = 0
 
     func connect(gatewayURL: String, token: String, appState: AppState) {
         self.gatewayURL = gatewayURL
@@ -124,7 +125,11 @@ class GatewayWSClient: ObservableObject {
                 if !Task.isCancelled {
                     isConnected = false
                     appState?.connectionState = .disconnected
-                    try? await Task.sleep(nanoseconds: 3_000_000_000)
+                    // Exponential backoff: don't spam reconnects
+                    reconnectAttempts += 1
+                    let delay = min(UInt64(pow(2.0, Double(reconnectAttempts))) * 1_000_000_000, 60_000_000_000)
+                    print("[WS] Connection lost. Retry #\(reconnectAttempts) in \(delay / 1_000_000_000)s")
+                    try? await Task.sleep(nanoseconds: delay)
                     if !Task.isCancelled {
                         await connectWebSocket()
                     }
@@ -192,6 +197,7 @@ class GatewayWSClient: ObservableObject {
 
         if let payloadType = payload["type"] as? String, payloadType == "hello-ok" {
             isConnected = true
+            reconnectAttempts = 0
             appState?.connectionState = .connected
             loadHistory()
             return

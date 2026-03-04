@@ -73,18 +73,15 @@ class GatewayHTTPClient: ObservableObject {
                     ["role": msg.isUser ? "user" : "assistant", "content": msg.text]
                 }
 
-                // Append inline instruction so the model returns content in code fences
-                let artifactInstruction = "\n\nIMPORTANT: Do NOT use any tools or try to create files. Return the complete HTML code directly in your message inside a markdown code fence like this: ```html ... ```. Just the code in your reply, nothing else."
-
                 // Build user message content — use content array if screenshot is present
                 let newUserMessage: [String: Any]
                 if screenshot != nil || appContext != nil {
                     var contentArray: [[String: Any]] = []
 
                     // Text content with optional context prefix
-                    var userContent = text + artifactInstruction
+                    var userContent = text
                     if let context = appContext {
-                        userContent = context.asSystemContext() + "\n\n" + text + artifactInstruction
+                        userContent = context.asSystemContext() + "\n\n" + text
                     }
                     contentArray.append(["type": "text", "text": userContent])
 
@@ -100,7 +97,7 @@ class GatewayHTTPClient: ObservableObject {
 
                     newUserMessage = ["role": "user", "content": contentArray]
                 } else {
-                    newUserMessage = ["role": "user", "content": text + artifactInstruction]
+                    newUserMessage = ["role": "user", "content": text]
                 }
 
                 let body: [String: Any] = [
